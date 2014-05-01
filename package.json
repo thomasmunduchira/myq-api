@@ -1,0 +1,23 @@
+{
+  "author": {
+    "name": "Chad Smith",
+    "email": "chad@nospam.me",
+    "url": "http://twitter.com/chadsmith"
+  },
+  "name": "liftmaster",
+  "description": "Control your LiftMaster MyQ garage door openers",
+  "keywords": ["liftmaster", "myq", "garage door"],
+  "version": "0.0.1",
+  "homepage": "https://github.com/chadsmith/node-liftmaster",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/chadsmith/node-liftmaster.git"
+  },
+  "engines": {
+    "node": "0.8.x"
+  },
+  "main": "./liftmaster.js",
+  "dependencies": {
+  	"request": "2.x"
+  }
+}
