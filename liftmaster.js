@@ -29,7 +29,7 @@ class MyQ {
       json: true
     }).then((response) => {
       const result = {
-        success: response.SecurityToken? true : false
+        success: response.SecurityToken ? true : false
       };
       if (result.success) {
         this.securityToken = response.SecurityToken;
@@ -39,7 +39,7 @@ class MyQ {
       }
       return result;
     }).catch((err) => {
-      throw err;
+      console.log(err);
     });
   };
 
@@ -51,6 +51,7 @@ class MyQ {
       };
       return result;
     }
+
     return request({
       method: 'GET',
       uri: this.endpoint + '/api/v4/userdevicedetails/get',
@@ -85,7 +86,7 @@ class MyQ {
       };
       return result;
     }).catch((err) => {
-      throw err;
+      console.log(err);
     });
   };
 
@@ -97,6 +98,7 @@ class MyQ {
       };
       return result;
     }
+    
     return request({
       method: 'GET',
       uri: this.endpoint + '/api/v4/deviceattribute/getdeviceattribute',
@@ -108,24 +110,25 @@ class MyQ {
       },
       json: true
     }).then((response) => {
+      const state = parseInt(response.AttributeValue);
       for (let door of this.doors) {
         if (door.id === doorId) {
-          door.state = response.AttributeValue;
+          door.state = state;
           door.updated = response.UpdatedTime;
           break;
         }
       }
       const result = {
         success: true,
-        state: response.AttributeValue
+        state
       };
       return result;
     }).catch((err) => {
-      throw err;
+      console.log(err);
     });
   };
 
-  setDoorState(deviceId, state) {
+  setDoorState(doorId, toggle) {
     if (!this.securityToken) {
       const result = {
         success: false,
@@ -133,35 +136,55 @@ class MyQ {
       };
       return result;
     }
+
+    let newState;
+    if (toggle == 0) {
+      newState = 2;
+    } else if (toggle == 1) {
+      newState = 1;
+    } else {
+      const result = {
+        success: false,
+        error: "Toggle has to be either 0 or 1."
+      };
+      return result;
+    }
+
     return request({
       method: 'PUT',
-      uri: this.endpoint + '/Device/setDeviceAttribute',
-      body: {
-        DeviceId: deviceId,
-        ApplicationId: this.appId,
-        AttributeName: 'desireddoorstate',
-        AttributeValue: state,
+      uri: this.endpoint + '/api/v4/deviceattribute/putdeviceattribute',
+      headers: {
+        MyQApplicationId: this.appId,
         securityToken: this.securityToken
+      },
+      body: {
+        MyQDeviceId: doorId,
+        AttributeName: 'desireddoorstate',
+        AttributeValue: toggle
       },
       json: true
     }).then((response) => {
       setTimeout(() => {
-        return this._loopDoorState(deviceId);
+        return this._loopDoorState(doorId, newState);
       }, 1000);
     }).catch((err) => {
-      throw err;
+      console.log(err);
     });
   };
 
-  _loopDoorState(deviceId) {
-    return this.getDoorState(deviceId)
-      .then((response) => {
-        if (response.state == 4 || response.state == 5) {
-          setTimeout(() => {
-            return this._loopDoorState(deviceId)
-          }, 5000);
+  _loopDoorState(doorId, newState) {
+    return this.getDoorState(doorId)
+      .then((result) => {
+        if (result.success) {
+          if (result.state === newState) {
+            return result;
+          } else {
+            setTimeout(() => {
+              return this._loopDoorState(doorId, newState);
+            }, 2500);
+          }
         } else {
-          return response;
+          return result;
         }
       }).catch((err) => {
         throw err;
