@@ -1,23 +1,39 @@
 {
+  "name": "liftmaster-api",
+  "description": "An updated API to interface with your LiftMaster MyQ garage doors",
+  "version": "0.0.2",
   "author": {
-    "name": "Chad Smith",
-    "email": "chad@nospam.me",
-    "url": "http://twitter.com/chadsmith"
+    "name": "Thomas Munduchira",
+    "email": "thomas@thomasmunduchira.com"
   },
-  "name": "liftmaster",
-  "description": "Control your LiftMaster MyQ garage door openers",
-  "keywords": ["liftmaster", "myq", "garage door"],
-  "version": "0.0.1",
-  "homepage": "https://github.com/chadsmith/node-liftmaster",
+  "contributors": [
+    {
+      "name": "Chad Smith",
+      "email": "chad@nospam.me",
+      "url": "http://twitter.com/chadsmith"
+    }
+  ],
+  "keywords": [
+    "liftmaster",
+    "myq",
+    "garage door",
+    "automation",
+    "api"
+  ],
+  "main": "./liftmaster.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "homepage": "https://github.com/thomasmunduchira/node-liftmaster",
   "repository": {
     "type": "git",
-    "url": "git://github.com/chadsmith/node-liftmaster.git"
+    "url": "https://github.com/thomasmunduchira/node-liftmaster.git"
   },
-  "engines": {
-    "node": "0.8.x"
+  "bugs": {
+    "url": "https://github.com/thomasmunduchira/node-liftmaster/issues"
   },
-  "main": "./liftmaster.js",
   "dependencies": {
-  	"request": "2.x"
+    "request": "^2.81.0",
+    "request-promise-native": "^1.0.4"
   }
 }
