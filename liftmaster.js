@@ -10,6 +10,7 @@ class MyQ {
     this.culture = "en";
     this.endpoint = 'https://myqexternal.myqdevice.com';
     this.appId = 'NWknvuBd7LoFHfXmKNMBcgajXtZEgKUh4V7WNzMidrpUUluDpVYVZx+xT4PCM5Kx';
+    this.garageDoorIds = [2, 5, 7, 17];
     this.username = username;
     this.password = password;
   };
@@ -31,46 +32,61 @@ class MyQ {
       },
       json: true
     }).then((response) => {
-      this.securityToken = response.SecurityToken;
-      return response;
+      const result = {
+        success: response.SecurityToken? true : false
+      };
+      if (result.success) {
+        this.securityToken = response.SecurityToken;
+        result.token = this.securityToken;
+      } else {
+        result.error = response.ErrorMessage;
+      }
+      return result;
     }).catch((err) => {
-      return err;
+      throw err;
     });
   };
 
-  getDevices() {
+  getDoors() {
     return request({
       method: 'GET',
-      uri: this.endpoint + '/api/UserDeviceDetails',
+      uri: this.endpoint + '/api/v4/userdevicedetails/get',
+      body: {
+        ApplicationId: this.appId,
+        SecurityToken: this.securityToken
+      },
       qs: {
         appId: this.appId,
-        securityToken: this.securityToken,
-        filterOn: true
+        SecurityToken: this.securityToken
       },
       json: true
     }).then((response) => {
-      this.devices = [];
-      response.Devices.forEach((Device, device) => {
-        if (Device.MyQDeviceTypeId != 2) {
-          return;
+      this.doors = [];
+      for (let device of response.Devices) {
+        if (this.garageDoorIds.includes(device.MyQDeviceTypeId)) {
+          const door = {
+            id: device.MyQDeviceId,
+            type: device.MyQDeviceTypeName
+          };
+          for (let attribute of device.Attributes) {
+            if (attribute.AttributeDisplayName === 'desc') {
+              door.name = attribute.Value;
+            }
+            if (attribute.AttributeDisplayName === 'doorstate') {
+              door.state = attribute.Value;
+              door.updated = attribute.UpdatedTime;
+            }
+          }
+          this.doors.push(door);
         }
-        device = {
-          id: Device.DeviceId
-        };
-        Device.Attributes.forEach((attribute) => {
-          if (attribute.Name == 'desc') {
-            device.name = attribute.Value;
-          }
-          if (attribute.Name == 'doorstate') {
-            device.state = attribute.Value;
-            device.updated = attribute.UpdatedTime;
-          }
-        });
-        this.devices.push(device);
-      });
-      return this.devices;
+      }
+      const result = {
+        success: true,
+        doors: this.doors
+      };
+      return result;
     }).catch((err) => {
-      return err;
+      throw err;
     });
   };
 
@@ -94,7 +110,7 @@ class MyQ {
         }
       });
     }).catch((err) => {
-      return err;
+      throw err;
     });
   };
 
@@ -115,7 +131,7 @@ class MyQ {
         return this._loopDoorState(deviceId);
       }, 1000);
     }).catch((err) => {
-      return err;
+      throw err;
     });
   };
 
@@ -130,7 +146,7 @@ class MyQ {
           return response;
         }
       }).catch((err) => {
-        return err;
+        throw err;
       });
   };
 };
