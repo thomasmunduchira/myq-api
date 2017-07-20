@@ -20,10 +20,6 @@ class MyQ {
       method: 'POST',
       uri: this.endpoint + '/api/v4/User/Validate',
       headers: {
-        "User-Agent": this.userAgent,
-        BrandId: this.brandId,
-        ApiVersion: this.apiVersion,
-        Culture: this.culture,
         MyQApplicationId: this.appId
       },
       body: {
@@ -48,13 +44,16 @@ class MyQ {
   };
 
   getDoors() {
+    if (!this.securityToken) {
+      const result = {
+        success: false,
+        error: "Not logged in."
+      };
+      return result;
+    }
     return request({
       method: 'GET',
       uri: this.endpoint + '/api/v4/userdevicedetails/get',
-      body: {
-        ApplicationId: this.appId,
-        SecurityToken: this.securityToken
-      },
       qs: {
         appId: this.appId,
         SecurityToken: this.securityToken
@@ -90,31 +89,50 @@ class MyQ {
     });
   };
 
-  getDoorState(deviceId) {
+  getDoorState(doorId) {
+    if (!this.securityToken) {
+      const result = {
+        success: false,
+        error: "Not logged in."
+      };
+      return result;
+    }
     return request({
       method: 'GET',
-      uri: this.endpoint + '/Device/getDeviceAttribute',
+      uri: this.endpoint + '/api/v4/deviceattribute/getdeviceattribute',
       qs: {
         appId: this.appId,
-        securityToken: this.securityToken,
-        devId: deviceId,
-        name: 'doorstate'
+        SecurityToken: this.securityToken,
+        MyQDeviceId: doorId,
+        AttributeName: 'doorstate'
       },
       json: true
     }).then((response) => {
-      this.devices.forEach((device) => {
-        if (device.id === deviceId) {
-          device.state = response.AttributeValue;
-          device.updated = response.UpdatedTime;
-          return device;
+      for (let door of this.doors) {
+        if (door.id === doorId) {
+          door.state = response.AttributeValue;
+          door.updated = response.UpdatedTime;
+          break;
         }
-      });
+      }
+      const result = {
+        success: true,
+        state: response.AttributeValue
+      };
+      return result;
     }).catch((err) => {
       throw err;
     });
   };
 
   setDoorState(deviceId, state) {
+    if (!this.securityToken) {
+      const result = {
+        success: false,
+        error: "Not logged in."
+      };
+      return result;
+    }
     return request({
       method: 'PUT',
       uri: this.endpoint + '/Device/setDeviceAttribute',
