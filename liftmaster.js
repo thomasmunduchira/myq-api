@@ -1,126 +1,138 @@
-var request = require('request');
+// UPDATED VERSION OF https://github.com/chadsmith/node-liftmaster/blob/master/liftmaster.js
 
-var MyQ = module.exports = function(username, password) {
-  this.endpoint = 'https://myqexternal.myqdevice.com';
-  this.appId = 'Vj8pQggXLhLy0WHahglCD4N1nAkkXQtGYpq2HrHD7H1nvmbT55KqtN6RSF4ILB/i';
-  this.username = username;
-  this.password = password;
-};
+const request = require('request-promise-native');
 
-MyQ.prototype.login = function(callback) {
-  var _self = this;
-  request({
-    method: 'GET',
-    uri: _self.endpoint + '/Membership/ValidateUserWithCulture',
-    qs: {
-      appId: _self.appId,
-      securityToken: null,
-      username: _self.username,
-      password: _self.password,
-      culture: 'en'
-    },
-    json: true
-  }, function(err, res, body) {
-    if(err || body.ErrorMessage)
-      return callback(err || new Error(body.ErrorMessage));
-    _self.userId = body.UserId;
-    _self.securityToken = body.SecurityToken;
-    return callback(null, body);
-  });
-};
+class MyQ {
+  constructor(username, password) {
+    this.userAgent = 'Chamberlain/3.73';
+    this.brandId = '2';
+    this.apiVersion = '4.1';
+    this.culture = "en";
+    this.endpoint = 'https://myqexternal.myqdevice.com';
+    this.appId = 'NWknvuBd7LoFHfXmKNMBcgajXtZEgKUh4V7WNzMidrpUUluDpVYVZx+xT4PCM5Kx';
+    this.username = username;
+    this.password = password;
+  };
 
-MyQ.prototype.getDevices = function(callback) {
-  var _self = this;
-  request({
-    method: 'GET',
-    uri: _self.endpoint + '/api/UserDeviceDetails',
-    qs: {
-      appId: _self.appId,
-      securityToken: _self.securityToken,
-      filterOn: true
-    },
-    json: true
-  }, function(err, res, body) {
-    if(err || body.ErrorMessage)
-      return callback(err || new Error(body.ErrorMessage));
-    _self.devices = [];
-    body.Devices.forEach(function(Device, device) {
-      if(Device.MyQDeviceTypeId != 2)
-        return;
-      device = {
-        id: Device.DeviceId
-      };
-      Device.Attributes.forEach(function(attribute) {
-        if(attribute.Name == 'desc')
-          device.name = attribute.Value;
-        if(attribute.Name == 'doorstate') {
-          device.state = attribute.Value;
-          device.updated = attribute.UpdatedTime;
+  login() {
+    return request({
+      method: 'POST',
+      uri: this.endpoint + '/api/v4/User/Validate',
+      headers: {
+        "User-Agent": this.userAgent,
+        BrandId: this.brandId,
+        ApiVersion: this.apiVersion,
+        Culture: this.culture,
+        MyQApplicationId: this.appId
+      },
+      body: {
+        username: this.username,
+        password: this.password
+      },
+      json: true
+    }).then((response) => {
+      this.securityToken = response.SecurityToken;
+      return response;
+    }).catch((err) => {
+      return err;
+    });
+  };
+
+  getDevices() {
+    return request({
+      method: 'GET',
+      uri: this.endpoint + '/api/UserDeviceDetails',
+      qs: {
+        appId: this.appId,
+        securityToken: this.securityToken,
+        filterOn: true
+      },
+      json: true
+    }).then((response) => {
+      this.devices = [];
+      response.Devices.forEach((Device, device) => {
+        if (Device.MyQDeviceTypeId != 2) {
+          return;
+        }
+        device = {
+          id: Device.DeviceId
+        };
+        Device.Attributes.forEach((attribute) => {
+          if (attribute.Name == 'desc') {
+            device.name = attribute.Value;
+          }
+          if (attribute.Name == 'doorstate') {
+            device.state = attribute.Value;
+            device.updated = attribute.UpdatedTime;
+          }
+        });
+        this.devices.push(device);
+      });
+      return this.devices;
+    }).catch((err) => {
+      return err;
+    });
+  };
+
+  getDoorState(deviceId) {
+    return request({
+      method: 'GET',
+      uri: this.endpoint + '/Device/getDeviceAttribute',
+      qs: {
+        appId: this.appId,
+        securityToken: this.securityToken,
+        devId: deviceId,
+        name: 'doorstate'
+      },
+      json: true
+    }).then((response) => {
+      this.devices.forEach((device) => {
+        if (device.id === deviceId) {
+          device.state = response.AttributeValue;
+          device.updated = response.UpdatedTime;
+          return device;
         }
       });
-      _self.devices.push(device);
+    }).catch((err) => {
+      return err;
     });
-    return callback(null, _self.devices);
-  });
-};
+  };
 
-MyQ.prototype.getDoorState = function(deviceId, callback) {
-  var _self = this;
-  request({
-    method: 'GET',
-    uri: _self.endpoint + '/Device/getDeviceAttribute',
-    qs: {
-      appId: _self.appId,
-      securityToken: _self.securityToken,
-      devId: deviceId,
-      name: 'doorstate'
-    },
-    json: true
-  }, function(err, res, body) {
-    if(err || body.ErrorMessage)
-      return callback(err || new Error(body.ErrorMessage));
-    _self.devices.forEach(function(device) {
-      if(device.id == deviceId) {
-        device.state = body.AttributeValue;
-        device.updated = body.UpdatedTime;
-        return callback(null, device); 
-      }
+  setDoorState(deviceId, state) {
+    return request({
+      method: 'PUT',
+      uri: this.endpoint + '/Device/setDeviceAttribute',
+      body: {
+        DeviceId: deviceId,
+        ApplicationId: this.appId,
+        AttributeName: 'desireddoorstate',
+        AttributeValue: state,
+        securityToken: this.securityToken
+      },
+      json: true
+    }).then((response) => {
+      setTimeout(() => {
+        return this._loopDoorState(deviceId);
+      }, 1000);
+    }).catch((err) => {
+      return err;
     });
-  });
+  };
+
+  _loopDoorState(deviceId) {
+    return this.getDoorState(deviceId)
+      .then((response) => {
+        if (response.state == 4 || response.state == 5) {
+          setTimeout(() => {
+            return this._loopDoorState(deviceId)
+          }, 5000);
+        } else {
+          return response;
+        }
+      }).catch((err) => {
+        return err;
+      });
+  };
 };
 
-MyQ.prototype.setDoorState = function(deviceId, state, callback) {
-  var _self = this;
-  request({
-    method: 'PUT',
-    uri: _self.endpoint + '/Device/setDeviceAttribute',
-    body: {
-      DeviceId: deviceId,
-      ApplicationId: _self.appId,
-      AttributeName: 'desireddoorstate',
-      AttributeValue: state,
-      securityToken: _self.securityToken
-    },
-    json: true
-  }, function(err, res, body) {
-    if(err || body.ErrorMessage)
-      return callback(err || new Error(body.ErrorMessage));
-    setTimeout(function() {
-      _self._loopDoorState(deviceId, callback);
-    }, 1000);
-  });
-};
-
-MyQ.prototype._loopDoorState = function(deviceId, callback) {
-  var _self = this;
-  _self.getDoorState(deviceId, function(err, res) {
-    if(err)
-      return callback(err);
-    if(res.state == 4 || res.state == 5)
-      setTimeout(function() {
-        _self._loopDoorState(deviceId, callback)
-      }, 5000);
-    else
-      return callback(null, res);
-  });
-};
+module.exports = MyQ;
