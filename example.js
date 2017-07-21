@@ -4,15 +4,15 @@ const garageDoor = new MyQ('email', 'password');
 // log in to MyQ
 garageDoor.login()
    // get all garage door devices
-  .then((response) => garageDoor.getDevices()
-  ).then((devices) => {
+  .then((response) => garageDoor.getDoors()
+  ).then((doors) => {
     // log each door state
-    devices.forEach((device) => {
-      console.log(device.name, doorStates[device.state]);
+    doors.forEach((door) => {
+      console.log(door.name, door.state);
     });
-    return devices;
+    return doors;
   // get the state of a single door
-  }).then((devices) => garageDoor.getDoorState(devices[0].id)
+  }).then((doors) => garageDoor.getDoorState(doors[0].id)
   // print out state
   ).then((state) => {
     console.log(state);

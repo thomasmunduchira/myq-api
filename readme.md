@@ -27,7 +27,7 @@ const garageDoor = new MyQ('email', 'password');
 
 ### garageDoor.login()
 
-Logs into your LiftMaster account and returns your account security token.
+Logs into your LiftMaster account and returns your account security token. This token is saved internally so you don't have to use this token or pass it back in any way. Running this function is a prerequisite to running all other functions that make up this API.
 
 ```js
 garageDoor.login()
@@ -38,13 +38,13 @@ garageDoor.login()
   });
 ```
 
-### garageDoor.getDevices()
+### garageDoor.getDoors()
 
-Returns an array of garage door devices on the account.
+Returns an array of garage doors on the account.
 
 ```js
-garageDoor.getDevices()
-  .then((devices) => {
+garageDoor.getDoors()
+  .then((doors) => {
 
   }).catch((err) => {
     console.log(err);
@@ -55,9 +55,11 @@ garageDoor.getDevices()
 
 Retrieves the latest state of the requested door.
 
+Door states: 1 = open, 2 = closed, 3 = stopped, 4 = opening, 5 = closing.
+
 ```js
-const device = garageDoor.devices[0];
-garageDoor.getDoorState(device.id)
+const door = garageDoor.doors[0];
+garageDoor.getDoorState(door.id)
   .then((state) => {
 
   }).catch((err) => {
@@ -65,15 +67,17 @@ garageDoor.getDoorState(device.id)
   });
 ```
 
-### garageDoor.setDoorState(id, state)
+### garageDoor.setDoorState(id, toggle)
 
 Set the requested door to open or close. Returns an updated state once complete.
 
-Known door states: 1 = open, 2 = closed, 4 = opening, 5 = closing.
+Toggles: 0 = close, 1 = open
+
+Door states: 1 = open, 2 = closed, 3 = stopped, 4 = opening, 5 = closing.
 
 ```js
-const device = garageDoor.devices[0];
-garageDoor.setDoorState(device.id, 1)
+const door = garageDoor.doors[0];
+garageDoor.setDoorState(door.id, 1)
   .then((state) => {
 
   }).catch((err) => {
