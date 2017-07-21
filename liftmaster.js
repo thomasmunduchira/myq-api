@@ -2,15 +2,12 @@
 
 const request = require('request-promise-native');
 
+const endpoint = 'https://myqexternal.myqdevice.com';
+const appId = 'NWknvuBd7LoFHfXmKNMBcgajXtZEgKUh4V7WNzMidrpUUluDpVYVZx+xT4PCM5Kx';
+const garageDoorIds = [2, 5, 7, 17];
+
 class MyQ {
   constructor(username, password) {
-    this.userAgent = 'Chamberlain/3.73';
-    this.brandId = '2';
-    this.apiVersion = '4.1';
-    this.culture = "en";
-    this.endpoint = 'https://myqexternal.myqdevice.com';
-    this.appId = 'NWknvuBd7LoFHfXmKNMBcgajXtZEgKUh4V7WNzMidrpUUluDpVYVZx+xT4PCM5Kx';
-    this.garageDoorIds = [2, 5, 7, 17];
     this.username = username;
     this.password = password;
   };
@@ -18,9 +15,9 @@ class MyQ {
   login() {
     return request({
       method: 'POST',
-      uri: this.endpoint + '/api/v4/User/Validate',
+      uri: endpoint + '/api/v4/User/Validate',
       headers: {
-        MyQApplicationId: this.appId
+        MyQApplicationId: appId
       },
       body: {
         username: this.username,
@@ -54,16 +51,16 @@ class MyQ {
 
     return request({
       method: 'GET',
-      uri: this.endpoint + '/api/v4/userdevicedetails/get',
+      uri: endpoint + '/api/v4/userdevicedetails/get',
       qs: {
-        appId: this.appId,
+        appId: appId,
         SecurityToken: this.securityToken
       },
       json: true
     }).then((response) => {
       this.doors = [];
       for (let device of response.Devices) {
-        if (this.garageDoorIds.includes(device.MyQDeviceTypeId)) {
+        if (garageDoorIds.includes(device.MyQDeviceTypeId)) {
           const door = {
             id: device.MyQDeviceId,
             type: device.MyQDeviceTypeName
@@ -101,9 +98,9 @@ class MyQ {
     
     return request({
       method: 'GET',
-      uri: this.endpoint + '/api/v4/deviceattribute/getdeviceattribute',
+      uri: endpoint + '/api/v4/deviceattribute/getdeviceattribute',
       qs: {
-        appId: this.appId,
+        appId: appId,
         SecurityToken: this.securityToken,
         MyQDeviceId: doorId,
         AttributeName: 'doorstate'
@@ -152,9 +149,9 @@ class MyQ {
 
     return request({
       method: 'PUT',
-      uri: this.endpoint + '/api/v4/deviceattribute/putdeviceattribute',
+      uri: endpoint + '/api/v4/deviceattribute/putdeviceattribute',
       headers: {
-        MyQApplicationId: this.appId,
+        MyQApplicationId: appId,
         securityToken: this.securityToken
       },
       body: {
