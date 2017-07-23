@@ -38,6 +38,14 @@ garageDoor.login()
   });
 ```
 
+Example returned object if call is successful:
+```js
+{
+  returnCode: 0,
+  token: "2sdf99a103190zdsv13nn13"
+}
+```
+
 ### garageDoor.getDoors()
 
 Returns an array of garage doors on the account.
@@ -49,6 +57,19 @@ garageDoor.getDoors()
   }).catch((err) => {
     console.log(err);
   });
+```
+
+Example returned object if call is successful:
+```js
+{
+  returnCode: 0,
+  doors: [{
+    door1State
+  },
+  {
+    door2State
+  }]
+}
 ```
 
 ### garageDoor.getDoorState(id)
@@ -65,6 +86,14 @@ garageDoor.getDoorState(door.id)
   }).catch((err) => {
     console.log(err);
   });
+```
+
+Example returned object if call is successful:
+```js
+{
+  returnCode: 0,
+  state: doorState
+}
 ```
 
 ### garageDoor.setDoorState(id, toggle)
@@ -85,6 +114,32 @@ garageDoor.setDoorState(door.id, 1)
   });
 ```
 
+Example returned object if call is successful:
+```js
+{
+  returnCode: 0,
+  state: 1
+}
+```
+
+## Return Codes
+
+Each call to the API will include a return code as well as an error message if applicable. The return codes as well their correlated meanings have been listed here for convenience.
+
+| Return Code | Meaning                               |
+|-------------|---------------------------------------|
+| 0           | Successful!                           |
+| 11          | Error: user not logged in             |
+| 12          | Error: toggle provided was not 0 or 1 |
+
+Example returned object if call is unsuccessful:
+```js
+{
+  returnCode: 11,
+  error: "Error: user not logged in"
+}
+```
+
 ## TODO
 
 See the [issue tracker](http://github.com/thomasmunduchira/node-liftmaster/issues) for more.
@@ -95,8 +150,7 @@ See the [issue tracker](http://github.com/thomasmunduchira/node-liftmaster/issue
 
 ## Original Author
 
-Special thanks to:
-[Chad Smith](http://twitter.com/chadsmith) ([chad@nospam.me](mailto:chad@nospam.me)).
+[Chad Smith](http://twitter.com/chadsmith) ([chad@nospam.me](mailto:chad@nospam.me))
 
 ## License
 

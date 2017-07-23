@@ -26,9 +26,9 @@ class MyQ {
       json: true
     }).then((response) => {
       const result = {
-        success: response.SecurityToken ? true : false
+        returnCode: response.SecurityToken ? 0 : 13
       };
-      if (result.success) {
+      if (result.returnCode === 0) {
         this.securityToken = response.SecurityToken;
         result.token = this.securityToken;
       } else {
@@ -43,7 +43,7 @@ class MyQ {
   getDoors() {
     if (!this.securityToken) {
       const result = {
-        success: false,
+        returnCode: 11,
         error: "Not logged in."
       };
       return result;
@@ -78,7 +78,7 @@ class MyQ {
         }
       }
       const result = {
-        success: true,
+        returnCode: 0,
         doors: this.doors
       };
       return result;
@@ -90,7 +90,7 @@ class MyQ {
   getDoorState(doorId) {
     if (!this.securityToken) {
       const result = {
-        success: false,
+        returnCode: 11,
         error: "Not logged in."
       };
       return result;
@@ -116,7 +116,7 @@ class MyQ {
         }
       }
       const result = {
-        success: true,
+        returnCode: 0,
         state
       };
       return result;
@@ -128,7 +128,7 @@ class MyQ {
   setDoorState(doorId, toggle) {
     if (!this.securityToken) {
       const result = {
-        success: false,
+        returnCode: 11,
         error: "Not logged in."
       };
       return result;
@@ -141,7 +141,7 @@ class MyQ {
       newState = 1;
     } else {
       const result = {
-        success: false,
+        returnCode: 12,
         error: "Toggle has to be either 0 or 1."
       };
       return result;
