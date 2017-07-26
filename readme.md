@@ -20,6 +20,8 @@ yarn add liftmaster-api
 
 ### new MyQ(email, password)
 
+Initialize credentials of the user.
+
 ```js
 const MyQ = require('liftmaster-api');
 const garageDoor = new MyQ('email', 'password');
@@ -27,7 +29,7 @@ const garageDoor = new MyQ('email', 'password');
 
 ### garageDoor.login()
 
-Logs into your LiftMaster account and returns your account security token. This token is saved internally so you don't have to use this token or pass it back in any way. Running this function is a prerequisite to running all other functions that make up this API.
+Logs into your LiftMaster account and returns your account security token. Running this function is a prerequisite to running other functions that make up this API.
 
 ```js
 garageDoor.login()
@@ -64,10 +66,10 @@ Example returned object if call is successful:
 {
   returnCode: 0,
   doors: [{
-    door1State
+    door1
   },
   {
-    door2State
+    door2
   }]
 }
 ```
@@ -98,7 +100,7 @@ Example returned object if call is successful:
 
 ### garageDoor.setDoorState(id, toggle)
 
-Set the requested door to open or close. Returns an updated state once complete.
+Set the requested door to open or close. Returns a confirmation once complete. Note that the door might not be opened or closed fully by the time this function returns.
 
 Toggles: 0 = close, 1 = open
 
@@ -117,8 +119,7 @@ garageDoor.setDoorState(door.id, 1)
 Example returned object if call is successful:
 ```js
 {
-  returnCode: 0,
-  state: 1
+  returnCode: 0
 }
 ```
 

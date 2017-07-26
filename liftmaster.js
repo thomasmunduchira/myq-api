@@ -58,7 +58,7 @@ class MyQ {
       },
       json: true
     }).then((response) => {
-      this.doors = [];
+      const doors = [];
       for (let device of response.Devices) {
         if (garageDoorIds.includes(device.MyQDeviceTypeId)) {
           const door = {
@@ -74,12 +74,12 @@ class MyQ {
               door.updated = attribute.UpdatedTime;
             }
           }
-          this.doors.push(door);
+          doors.push(door);
         }
       }
       const result = {
         returnCode: 0,
-        doors: this.doors
+        doors
       };
       return result;
     }).catch((err) => {
@@ -95,7 +95,7 @@ class MyQ {
       };
       return result;
     }
-    
+
     return request({
       method: 'GET',
       uri: endpoint + '/api/v4/deviceattribute/getdeviceattribute',
@@ -108,13 +108,6 @@ class MyQ {
       json: true
     }).then((response) => {
       const state = parseInt(response.AttributeValue);
-      for (let door of this.doors) {
-        if (door.id === doorId) {
-          door.state = state;
-          door.updated = response.UpdatedTime;
-          break;
-        }
-      }
       const result = {
         returnCode: 0,
         state
@@ -161,9 +154,10 @@ class MyQ {
       },
       json: true
     }).then((response) => {
-      setTimeout(() => {
-        return this._loopDoorState(doorId, newState);
-      }, 1000);
+      const result = {
+        returnCode: 0
+      };
+      return result;
     }).catch((err) => {
       console.log(err);
     });
@@ -172,7 +166,7 @@ class MyQ {
   _loopDoorState(doorId, newState) {
     return this.getDoorState(doorId)
       .then((result) => {
-        if (result.success) {
+        if (result.returnCode === 0) {
           if (result.state === newState) {
             return result;
           } else {
