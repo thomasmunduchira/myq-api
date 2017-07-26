@@ -1,4 +1,4 @@
-# node-liftmaster
+# myq-api
 
 Interface with your [MyQ](https://www.liftmaster.com/for-homes/myq-connected-home?gclid=CjwKCAjw2NvLBRAjEiwAF98GMePqZknk7-vCeYlvOITPCbuuhbUBgB8XqIF61GsimwJAmjQHIZvgLRoCgSMQAvD_BwE&gclsrc=aw.ds) garage doors.
 
