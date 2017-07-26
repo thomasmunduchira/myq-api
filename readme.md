@@ -1,19 +1,19 @@
 # node-liftmaster
 
-Interface with your [LiftMaster MyQ](http://www.liftmaster.com/lmcv2/connectedhome.htm) garage doors.
+Interface with your [MyQ](https://www.liftmaster.com/for-homes/myq-connected-home?gclid=CjwKCAjw2NvLBRAjEiwAF98GMePqZknk7-vCeYlvOITPCbuuhbUBgB8XqIF61GsimwJAmjQHIZvgLRoCgSMQAvD_BwE&gclsrc=aw.ds) garage doors.
 
 This is an updated API forked from [this repository](https://github.com/chadsmith/node-liftmaster). This module uses ES6 syntax and promises.
 
 ## Installation
 
 ```bash
-npm install liftmaster-api --save
+npm install myq-api --save
 ```
 
 or 
 
 ```bash
-yarn add liftmaster-api
+yarn add myq-api
 ```
 
 ## Usage Overview
@@ -23,13 +23,13 @@ yarn add liftmaster-api
 Initialize credentials of the user.
 
 ```js
-const MyQ = require('liftmaster-api');
+const MyQ = require('myq-api');
 const garageDoor = new MyQ('email', 'password');
 ```
 
 ### garageDoor.login()
 
-Logs into your LiftMaster account and returns your account security token. Running this function is a prerequisite to running other functions that make up this API.
+Logs into your MyQ account and returns your account security token. Running this function is a prerequisite to running other functions that make up this API.
 
 ```js
 garageDoor.login()
@@ -81,7 +81,6 @@ Retrieves the latest state of the requested door.
 Door states: 1 = open, 2 = closed, 3 = stopped, 4 = opening, 5 = closing.
 
 ```js
-const door = garageDoor.doors[0];
 garageDoor.getDoorState(door.id)
   .then((state) => {
 
@@ -107,7 +106,6 @@ Toggles: 0 = close, 1 = open
 Door states: 1 = open, 2 = closed, 3 = stopped, 4 = opening, 5 = closing.
 
 ```js
-const door = garageDoor.doors[0];
 garageDoor.setDoorState(door.id, 1)
   .then((state) => {
 
@@ -155,4 +153,4 @@ See the [issue tracker](http://github.com/thomasmunduchira/node-liftmaster/issue
 
 ## License
 
-This project is [UNLICENSED](http://unlicense.org/) and not endorsed by or affiliated with [LiftMaster](http://www.liftmaster.com/).
+This project is [UNLICENSED](http://unlicense.org/) and not endorsed by or affiliated with [Chamberlain](https://www.chamberlain.com/) or [LiftMaster](https://www.liftmaster.com/).

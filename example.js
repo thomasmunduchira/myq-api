@@ -1,4 +1,4 @@
-const MyQ = require('liftmaster-api');
+const MyQ = require('myq-api');
 const garageDoor = new MyQ('email', 'password');
 
 // log in to MyQ

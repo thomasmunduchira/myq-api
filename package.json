@@ -1,6 +1,6 @@
 {
-  "name": "liftmaster-api",
-  "description": "An updated API to interface with your LiftMaster MyQ garage doors",
+  "name": "myq-api",
+  "description": "An updated API to interface with your MyQ garage doors",
   "version": "0.0.2",
   "author": {
     "name": "Thomas Munduchira",
@@ -15,12 +15,13 @@
   ],
   "keywords": [
     "liftmaster",
+    "chamberlain",
     "myq",
     "garage door",
     "automation",
     "api"
   ],
-  "main": "./liftmaster.js",
+  "main": "./myq.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
