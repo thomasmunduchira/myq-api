@@ -25,6 +25,13 @@ class MyQ {
       },
       json: true
     }).then((response) => {
+      if (!response) {
+        const result = {
+          returnCode: 14,
+          error: "Something went wrong. Please try again later!"
+        };
+        return result;
+      }
       const result = {
         returnCode: response.SecurityToken ? 0 : 13
       };
@@ -37,6 +44,11 @@ class MyQ {
       return result;
     }).catch((err) => {
       console.log(err);
+      const result = {
+        returnCode: 14,
+        error: "Something went wrong. Please try again later!"
+      };
+      return result;
     });
   };
 
@@ -58,6 +70,13 @@ class MyQ {
       },
       json: true
     }).then((response) => {
+      if (!response) {
+        const result = {
+          returnCode: 14,
+          error: "Something went wrong. Please try again later!"
+        };
+        return result;
+      }
       const doors = [];
       for (let device of response.Devices) {
         if (garageDoorIds.includes(device.MyQDeviceTypeId)) {
@@ -84,6 +103,11 @@ class MyQ {
       return result;
     }).catch((err) => {
       console.log(err);
+      const result = {
+        returnCode: 14,
+        error: "Something went wrong. Please try again later!"
+      };
+      return result;
     });
   };
 
@@ -107,6 +131,13 @@ class MyQ {
       },
       json: true
     }).then((response) => {
+      if (!response) {
+        const result = {
+          returnCode: 14,
+          error: "Something went wrong. Please try again later!"
+        };
+        return result;
+      }
       const state = parseInt(response.AttributeValue);
       const result = {
         returnCode: 0,
@@ -115,6 +146,11 @@ class MyQ {
       return result;
     }).catch((err) => {
       console.log(err);
+      const result = {
+        returnCode: 14,
+        error: "Something went wrong. Please try again later!"
+      };
+      return result;
     });
   };
 
@@ -154,12 +190,24 @@ class MyQ {
       },
       json: true
     }).then((response) => {
+      if (!response) {
+        const result = {
+          returnCode: 14,
+          error: "Something went wrong. Please try again later!"
+        };
+        return result;
+      }
       const result = {
         returnCode: 0
       };
       return result;
     }).catch((err) => {
       console.log(err);
+      const result = {
+        returnCode: 14,
+        error: "Something went wrong. Please try again later!"
+      };
+      return result;
     });
   };
 
