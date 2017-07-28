@@ -5,6 +5,21 @@ const request = require('request-promise-native');
 const endpoint = 'https://myqexternal.myqdevice.com';
 const appId = 'NWknvuBd7LoFHfXmKNMBcgajXtZEgKUh4V7WNzMidrpUUluDpVYVZx+xT4PCM5Kx';
 const garageDoorIds = [2, 5, 7, 17];
+const errors = {
+  11: 'Something unexpected happened. Please wait a bit and try again',
+  12: 'MyQ service is currently down. Please wait a bit and try again.',
+  13: 'User not logged in.',
+  14: 'User credentials are not valid.',
+  15: 'Toggle provided is not 0 or 1.'
+};
+
+const returnError = (returnCode) {
+  const result = {
+    returnCode,
+    error: errors[returnCode]
+  }
+  return result;
+}
 
 class MyQ {
   constructor(username, password) {
@@ -26,39 +41,27 @@ class MyQ {
       json: true
     }).then((response) => {
       if (!response) {
+        return returnError(12);
+      }
+      if (response.SecurityToken) {
+        this.securityToken = response.SecurityToken;
         const result = {
-          returnCode: 14,
-          error: "Something went wrong. Please try again later!"
+          returnCode: 0,
+          token: response.SecurityToken
         };
         return result;
-      }
-      const result = {
-        returnCode: response.SecurityToken ? 0 : 13
-      };
-      if (result.returnCode === 0) {
-        this.securityToken = response.SecurityToken;
-        result.token = this.securityToken;
       } else {
-        result.error = response.ErrorMessage;
+        returnError(14);
       }
-      return result;
     }).catch((err) => {
-      console.log(err);
-      const result = {
-        returnCode: 14,
-        error: "Something went wrong. Please try again later!"
-      };
-      return result;
+      console.error(err);
+      return returnError(11);
     });
   };
 
   getDoors() {
     if (!this.securityToken) {
-      const result = {
-        returnCode: 11,
-        error: "Not logged in."
-      };
-      return result;
+      return returnError(13);
     }
 
     return request({
@@ -71,11 +74,7 @@ class MyQ {
       json: true
     }).then((response) => {
       if (!response) {
-        const result = {
-          returnCode: 14,
-          error: "Something went wrong. Please try again later!"
-        };
-        return result;
+        return returnError(12);
       }
       const doors = [];
       for (let device of response.Devices) {
@@ -102,22 +101,14 @@ class MyQ {
       };
       return result;
     }).catch((err) => {
-      console.log(err);
-      const result = {
-        returnCode: 14,
-        error: "Something went wrong. Please try again later!"
-      };
-      return result;
+      console.error(err);
+      return returnError(11);
     });
   };
 
   getDoorState(doorId) {
     if (!this.securityToken) {
-      const result = {
-        returnCode: 11,
-        error: "Not logged in."
-      };
-      return result;
+      return returnError(13);
     }
 
     return request({
@@ -132,11 +123,7 @@ class MyQ {
       json: true
     }).then((response) => {
       if (!response) {
-        const result = {
-          returnCode: 14,
-          error: "Something went wrong. Please try again later!"
-        };
-        return result;
+        return returnError(12);
       }
       const state = parseInt(response.AttributeValue);
       const result = {
@@ -145,22 +132,14 @@ class MyQ {
       };
       return result;
     }).catch((err) => {
-      console.log(err);
-      const result = {
-        returnCode: 14,
-        error: "Something went wrong. Please try again later!"
-      };
-      return result;
+      console.error(err);
+      return returnError(11);
     });
   };
 
   setDoorState(doorId, toggle) {
     if (!this.securityToken) {
-      const result = {
-        returnCode: 11,
-        error: "Not logged in."
-      };
-      return result;
+      return returnError(13);
     }
 
     let newState;
@@ -169,11 +148,7 @@ class MyQ {
     } else if (toggle == 1) {
       newState = 1;
     } else {
-      const result = {
-        returnCode: 12,
-        error: "Toggle has to be either 0 or 1."
-      };
-      return result;
+      return returnError(15);
     }
 
     return request({
@@ -191,23 +166,15 @@ class MyQ {
       json: true
     }).then((response) => {
       if (!response) {
-        const result = {
-          returnCode: 14,
-          error: "Something went wrong. Please try again later!"
-        };
-        return result;
+        return returnError(12);
       }
       const result = {
         returnCode: 0
       };
       return result;
     }).catch((err) => {
-      console.log(err);
-      const result = {
-        returnCode: 14,
-        error: "Something went wrong. Please try again later!"
-      };
-      return result;
+      console.error(err);
+      return returnError(11);
     });
   };
 

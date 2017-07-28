@@ -36,7 +36,7 @@ garageDoor.login()
   .then((token) => {
 
   }).catch((err) => {
-    console.log(err);
+    console.error(err);
   });
 ```
 
@@ -57,7 +57,7 @@ garageDoor.getDoors()
   .then((doors) => {
 
   }).catch((err) => {
-    console.log(err);
+    console.error(err);
   });
 ```
 
@@ -85,7 +85,7 @@ garageDoor.getDoorState(door.id)
   .then((state) => {
 
   }).catch((err) => {
-    console.log(err);
+    console.error(err);
   });
 ```
 
@@ -110,7 +110,7 @@ garageDoor.setDoorState(door.id, 1)
   .then((state) => {
 
   }).catch((err) => {
-    console.log(err);
+    console.error(err);
   });
 ```
 
@@ -123,19 +123,22 @@ Example returned object if call is successful:
 
 ## Return Codes
 
-Each call to the API will include a return code as well as an error message if applicable. The return codes as well their correlated meanings have been listed here for convenience.
+Each call to the API will include a return code as well as an error message if applicable. The return codes as well their correlated messages have been listed here for convenience.
 
-| Return Code | Meaning                               |
-|-------------|---------------------------------------|
-| 0           | Successful!                           |
-| 11          | Error: user not logged in             |
-| 12          | Error: toggle provided was not 0 or 1 |
+| Return Code | Message                                                         |
+|-------------|-----------------------------------------------------------------|
+| 0           | Successful!                                                     |
+| 11          | Something unexpected happened. Please wait a bit and try again. |
+| 12          | MyQ service is currently down. Please wait a bit and try again. |
+| 13          | User not logged in.                                             |
+| 14          | User credentials are not valid.                                 |
+| 15          | Toggle provided is not 0 or 1.                                  |
 
 Example returned object if call is unsuccessful:
 ```js
 {
-  returnCode: 11,
-  error: "Error: user not logged in"
+  returnCode: 14,
+  error: "User credentials are not valid."
 }
 ```
 
