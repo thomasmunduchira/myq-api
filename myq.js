@@ -9,15 +9,16 @@ const errors = {
   11: 'Something unexpected happened. Please wait a bit and try again.',
   12: 'MyQ service is currently down. Please wait a bit and try again.',
   13: 'User not logged in.',
-  14: 'User credentials are not valid.',
-  15: 'Toggle provided is not 0 or 1.'
+  14: 'Email and/or password are incorrect.',
+  15: 'Toggle provided is not 0 or 1.',
+  16: 'User is locked out due to too many tries. Please go to the MyQ website and click "Forgot Password" to reset the password and gain access to the account. Note that it might take a while before being able to login through this application again - this error might keep popping up despite having unlocked the account.'
 };
 
-const returnError = (returnCode) {
+const returnError = (returnCode) => {
   const result = {
     returnCode,
     error: errors[returnCode]
-  }
+  };
   return result;
 }
 
@@ -51,11 +52,15 @@ class MyQ {
         };
         return result;
       } else {
-        returnError(14);
+        return returnError(14);
       }
     }).catch((err) => {
-      console.error(err);
-      return returnError(11);
+      if (err.message === 'Error: read ECONNRESET') {
+        return returnError(16);
+      } else {
+        console.error(err);
+        return returnError(11);
+      }
     });
   };
 
