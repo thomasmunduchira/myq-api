@@ -6,7 +6,7 @@ const endpoint = 'https://myqexternal.myqdevice.com';
 const appId = 'NWknvuBd7LoFHfXmKNMBcgajXtZEgKUh4V7WNzMidrpUUluDpVYVZx+xT4PCM5Kx';
 const garageDoorIds = [2, 5, 7, 17];
 const errors = {
-  11: 'Something unexpected happened. Please wait a bit and try again',
+  11: 'Something unexpected happened. Please wait a bit and try again.',
   12: 'MyQ service is currently down. Please wait a bit and try again.',
   13: 'User not logged in.',
   14: 'User credentials are not valid.',
