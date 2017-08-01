@@ -13,14 +13,14 @@ garageDoor.login()
   .then((result) => {
     console.log(`login result: ${JSON.stringify(result)}`);
     console.log('Getting all devices on account');
-    return garageDoor.getDevices([15, 17]);
+    return garageDoor.getDevices([17]);
   }).then((result) => {
     console.log(`getDevices result: ${JSON.stringify(result)}`);
     if (result.returnCode !== 0) {
       throw 'getDevices unsuccessful!';
     }
 
-    const doors = result[17];
+    const doors = result.devices;
     for (let door of doors) {
       console.log(`Name: ${door.name}, State: ${door.doorState}`);
     }

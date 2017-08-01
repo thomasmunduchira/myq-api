@@ -95,9 +95,9 @@ class MyQ {
         if (!allTypeIds.includes(typeId)) {
           return returnError(15);
         }
-        result[typeId] = [];
       };
 
+      const modifiedDevices = [];
       for (let device of response.Devices) {
         if (typeIds.includes(device.MyQDeviceTypeId)) {
           const modifiedDevice = {
@@ -122,9 +122,10 @@ class MyQ {
               modifiedDevice.lightStateUpdated = parseInt(attribute.UpdatedTime);
             }
           }
-          result[device.MyQDeviceTypeId].push(modifiedDevice);
+          modifiedDevices.push(modifiedDevice);
         }
       }
+      result.devices = modifiedDevices;
       return result;
     }).catch((err) => {
       console.error(err);

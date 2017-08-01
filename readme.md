@@ -79,7 +79,7 @@ Example returned object if call is successful:
 ```js
 {
   "returnCode": 0,
-  "3": [
+  "devices": [
     {
       "id": 481404100,
       "typeId": 3,
@@ -89,9 +89,7 @@ Example returned object if call is successful:
       "name": "Light",
       "lightState": 2,
       "lightStateUpdated": 1501609106061
-    }
-  ],
-  "15": [
+    },
     {
       "id": 2323893289,
       "typeId": 15,
@@ -99,9 +97,7 @@ Example returned object if call is successful:
       "serialNumber": "DS4613424DJJS",
       "online": true,
       "name": "Home"
-    }
-  ],
-  "17": [
+    },
     {
       "id": 1631093013,
       "typeId": 17,
