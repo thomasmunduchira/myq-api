@@ -4,13 +4,13 @@ const request = require('request-promise-native');
 
 const endpoint = 'https://myqexternal.myqdevice.com';
 const appId = 'NWknvuBd7LoFHfXmKNMBcgajXtZEgKUh4V7WNzMidrpUUluDpVYVZx+xT4PCM5Kx';
-const garageDoorIds = [2, 5, 7, 17];
+const allTypeIds = [1, 2, 3, 5, 7, 9, 13, 15, 16, 17];
 const errors = {
   11: 'Something unexpected happened. Please wait a bit and try again.',
   12: 'MyQ service is currently down. Please wait a bit and try again.',
-  13: 'User not logged in.',
+  13: 'Not logged in.',
   14: 'Email and/or password are incorrect.',
-  15: 'Toggle provided is not 0 or 1.',
+  15: 'Invalid parameter provided.',
   16: 'User is locked out due to too many tries. Please go to the MyQ website and click "Forgot Password" to reset the password and gain access to the account. Note that it might take a while before being able to login through this application again - this error might keep popping up despite having unlocked the account.'
 };
 
@@ -44,6 +44,7 @@ class MyQ {
       if (!response) {
         return returnError(12);
       }
+
       if (response.SecurityToken) {
         this.securityToken = response.SecurityToken;
         const result = {
@@ -64,10 +65,14 @@ class MyQ {
     });
   };
 
-  getDoors() {
+  getDevices(typeIds) {
     if (!this.securityToken) {
       return returnError(13);
+    } else if (typeIds === null) {
+      return returnError(15);
     }
+
+    typeIds = Array.isArray(typeIds) ? typeIds : [typeIds];
 
     return request({
       method: 'GET',
@@ -81,37 +86,53 @@ class MyQ {
       if (!response) {
         return returnError(12);
       }
-      const doors = [];
-      for (let device of response.Devices) {
-        if (garageDoorIds.includes(device.MyQDeviceTypeId)) {
-          const door = {
-            id: device.MyQDeviceId,
-            type: device.MyQDeviceTypeName
-          };
-          for (let attribute of device.Attributes) {
-            if (attribute.AttributeDisplayName === 'desc') {
-              door.name = attribute.Value;
-            }
-            if (attribute.AttributeDisplayName === 'doorstate') {
-              door.state = attribute.Value;
-              door.updated = attribute.UpdatedTime;
-            }
-          }
-          doors.push(door);
-        }
-      }
+
       const result = {
         returnCode: 0,
-        doors
       };
+
+      for (let typeId of typeIds) {
+        if (!allTypeIds.includes(typeId)) {
+          return returnError(15);
+        }
+        result[typeId] = [];
+      };
+
+      for (let device of response.Devices) {
+        if (typeIds.includes(device.MyQDeviceTypeId)) {
+          const modifiedDevice = {
+            id: device.MyQDeviceId,
+            typeId: device.MyQDeviceTypeId,
+            typeName: device.MyQDeviceTypeName,
+            serialNumber: device.SerialNumber
+          };
+          for (let attribute of device.Attributes) {
+            if (attribute.AttributeDisplayName === 'online') {
+              modifiedDevice.online = attribute.Value === 'True';
+            }
+            if (attribute.AttributeDisplayName === 'desc') {
+              modifiedDevice.name = attribute.Value;
+            }
+            if (attribute.AttributeDisplayName === 'doorstate') {
+              modifiedDevice.doorState = parseInt(attribute.Value);
+              modifiedDevice.doorStateUpdated = parseInt(attribute.UpdatedTime);
+            }
+            if (attribute.AttributeDisplayName === 'lightstate') {
+              modifiedDevice.lightState = parseInt(attribute.Value);
+              modifiedDevice.lightStateUpdated = parseInt(attribute.UpdatedTime);
+            }
+          }
+          result[device.MyQDeviceTypeId].push(modifiedDevice);
+        }
+      }
       return result;
     }).catch((err) => {
       console.error(err);
       return returnError(11);
     });
-  };
+  }
 
-  getDoorState(doorId) {
+  _getDeviceState(id, attributeName) {
     if (!this.securityToken) {
       return returnError(13);
     }
@@ -122,14 +143,15 @@ class MyQ {
       qs: {
         appId: appId,
         SecurityToken: this.securityToken,
-        MyQDeviceId: doorId,
-        AttributeName: 'doorstate'
+        MyQDeviceId: id,
+        AttributeName: attributeName
       },
       json: true
     }).then((response) => {
       if (!response) {
         return returnError(12);
       }
+
       const state = parseInt(response.AttributeValue);
       const result = {
         returnCode: 0,
@@ -137,12 +159,43 @@ class MyQ {
       };
       return result;
     }).catch((err) => {
-      console.error(err);
-      return returnError(11);
+      throw err;
     });
   };
 
-  setDoorState(doorId, toggle) {
+  getDoorState(id) {
+    return this._getDeviceState(id, 'doorstate')
+      .then((result) => {
+        if (result.returnCode !== 0) {
+          return result;
+        }
+
+        result.doorState = result.state;
+        delete result.state;
+        return result;
+      }).catch((err) => {
+        console.error(err);
+        return returnError(11);
+      });
+  };
+
+  getLightState(id) {
+    return this._getDeviceState(id, 'lightstate')
+      .then((result) => {
+        if (result.returnCode !== 0) {
+          return result;
+        }
+
+        result.lightState = result.state;
+        delete result.state;
+        return result;
+      }).catch((err) => {
+        console.error(err);
+        return returnError(11);
+      });
+  };
+
+  _setDeviceState(id, toggle, attributeName) {
     if (!this.securityToken) {
       return returnError(13);
     }
@@ -164,8 +217,8 @@ class MyQ {
         securityToken: this.securityToken
       },
       body: {
-        MyQDeviceId: doorId,
-        AttributeName: 'desireddoorstate',
+        MyQDeviceId: id,
+        AttributeName: attributeName,
         AttributeValue: toggle
       },
       json: true
@@ -173,29 +226,49 @@ class MyQ {
       if (!response) {
         return returnError(12);
       }
+
       const result = {
         returnCode: 0
       };
       return result;
     }).catch((err) => {
-      console.error(err);
-      return returnError(11);
+      throw err;
     });
+  };
+
+  setDoorState(id, toggle) {
+    return this._setDeviceState(id, toggle, 'desireddoorstate')
+      .then((result) => {
+        return result;
+      }).catch((err) => {
+        console.error(err);
+        return returnError(11);
+      });
+  };
+
+  setLightState(id, toggle) {
+    return this._setDeviceState(id, toggle, 'desiredlightstate')
+      .then((result) => {
+        return result;
+      }).catch((err) => {
+        console.error(err);
+        return returnError(11);
+      });
   };
 
   _loopDoorState(doorId, newState) {
     return this.getDoorState(doorId)
       .then((result) => {
-        if (result.returnCode === 0) {
-          if (result.state === newState) {
-            return result;
-          } else {
-            setTimeout(() => {
-              return this._loopDoorState(doorId, newState);
-            }, 2500);
-          }
-        } else {
+        if (result.returnCode !== 0) {
           return result;
+        }
+        
+        if (result.state === newState) {
+          return result;
+        } else {
+          setTimeout(() => {
+            return this._loopDoorState(doorId, newState);
+          }, 2500);
         }
       }).catch((err) => {
         throw err;
