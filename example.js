@@ -1,5 +1,5 @@
 const MyQ = require('myq-api');
-const garageDoor = new MyQ('email', 'password');
+const account = new MyQ('email', 'password');
 
 const delay = (time) => {
   return new Promise((resolve) => {
@@ -9,13 +9,13 @@ const delay = (time) => {
 
 const data = {};
 console.log('Logging in');
-garageDoor.login()
+account.login()
   .then((result) => {
-    console.log(`login result: ${JSON.stringify(result)}`);
+    console.log('login result:', result);
     console.log('Getting all devices on account');
-    return garageDoor.getDevices([17]);
+    return account.getDevices([17]);
   }).then((result) => {
-    console.log(`getDevices result: ${JSON.stringify(result)}`);
+    console.log('getDevices result:', result);
     if (result.returnCode !== 0) {
       throw 'getDevices unsuccessful!';
     }
@@ -29,10 +29,10 @@ garageDoor.login()
     data.doors = doors;
     if (doors.length > 0) {
       console.log('Closing door');
-      return garageDoor.setDoorState(doors[0].id, 0);
+      return account.setDoorState(doors[0].id, 0);
     }
   }).then((result) => {
-    console.log(`setDoorState result: ${JSON.stringify(result)}`);
+    console.log('setDoorState result:', result);
     if (result.returnCode !== 0) {
       throw 'setDoorState unsuccessful!';
     }
@@ -42,10 +42,10 @@ garageDoor.login()
     console.log('Waiting five seconds before polling state again');
     return delay(5000);
   }).then(() => {
-    return garageDoor.getDoorState(data.doors[0].id);
+    return account.getDoorState(data.doors[0].id);
     // print out state
   }).then((result) => {
-    console.log(`getDoorState result: ${JSON.stringify(result)}`);
+    console.log('getDoorState result:', result);
     if (result.returnCode !== 0) {
       throw 'getDoorState unsuccessful!';
     }

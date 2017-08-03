@@ -10,11 +10,15 @@ const errors = {
   12: 'MyQ service is currently down. Please wait a bit and try again.',
   13: 'Not logged in.',
   14: 'Email and/or password are incorrect.',
-  15: 'Invalid parameter provided.',
-  16: 'User is locked out due to too many tries. Please go to the MyQ website and click "Forgot Password" to reset the password and gain access to the account. Note that it might take a while before being able to login through this application again - this error might keep popping up despite having unlocked the account.'
+  15: 'Invalid parameter(s) provided.',
+  16: 'User is locked out due to too many tries. Please wait 10 minutes and try again.'
 };
 
-const returnError = (returnCode) => {
+const returnError = (returnCode, err) => {
+  console.log(`Handled (${returnCode})`); 
+  if (err) {
+    console.log('Error:', err);
+  }
   const result = {
     returnCode,
     error: errors[returnCode]
@@ -24,77 +28,86 @@ const returnError = (returnCode) => {
 
 class MyQ {
   constructor(username, password) {
-    this.username = username;
-    this.password = password;
+    this._username = username;
+    this._password = password;
   };
 
   login() {
+    if (!this._username || !this._password) {
+      return Promise.resolve(returnError(14));
+    }
+
     return request({
       method: 'POST',
-      uri: endpoint + '/api/v4/User/Validate',
+      uri: `${endpoint}/api/v4/User/Validate`,
       headers: {
         MyQApplicationId: appId
       },
       body: {
-        username: this.username,
-        password: this.password
+        username: this._username,
+        password: this._password
       },
       json: true
     }).then((response) => {
       if (!response) {
         return returnError(12);
+      } else if (response.ReturnCode === '203') {
+        return returnError(14, response);
+      } else if (!response.SecurityToken) {
+        return returnError(11, response);
       }
 
-      if (response.SecurityToken) {
-        this.securityToken = response.SecurityToken;
-        const result = {
-          returnCode: 0,
-          token: response.SecurityToken
-        };
-        return result;
-      } else {
-        return returnError(14);
-      }
+      this._securityToken = response.SecurityToken;
+      const result = {
+        returnCode: 0,
+        token: response.SecurityToken
+      };
+      return result;
     }).catch((err) => {
       if (err.message === 'Error: read ECONNRESET') {
-        return returnError(16);
+        return returnError(16, err);
+      } else if (err.statusCode === 500) {
+        return returnError(14, err);
       } else {
-        console.error(err);
-        return returnError(11);
+        return returnError(11, err);
       }
     });
   };
 
   getDevices(typeIds) {
-    if (!this.securityToken) {
-      return returnError(13);
+    if (!this._securityToken) {
+      return Promise.resolve(returnError(13));
     } else if (typeIds === null) {
-      return returnError(15);
+      return Promise.resolve(returnError(15));
     }
 
     typeIds = Array.isArray(typeIds) ? typeIds : [typeIds];
 
+    for (let typeId of typeIds) {
+      if (!allTypeIds.includes(typeId)) {
+        return returnError(15);
+      }
+    };
+
     return request({
       method: 'GET',
-      uri: endpoint + '/api/v4/userdevicedetails/get',
+      uri: `${endpoint}/api/v4/userdevicedetails/get`,
       qs: {
         appId: appId,
-        SecurityToken: this.securityToken
+        SecurityToken: this._securityToken
       },
       json: true
     }).then((response) => {
       if (!response) {
         return returnError(12);
+      } else if (response.ReturnCode === '-3333') {
+        return returnError(13, response);
+      } else if (!response.Devices) {
+        return returnError(11, response);
       }
 
       const result = {
-        returnCode: 0,
-      };
-
-      for (let typeId of typeIds) {
-        if (!allTypeIds.includes(typeId)) {
-          return returnError(15);
-        }
+        returnCode: 0
       };
 
       const modifiedDevices = [];
@@ -128,22 +141,21 @@ class MyQ {
       result.devices = modifiedDevices;
       return result;
     }).catch((err) => {
-      console.error(err);
-      return returnError(11);
+      return returnError(11, err);
     });
   }
 
   _getDeviceState(id, attributeName) {
-    if (!this.securityToken) {
-      return returnError(13);
+    if (!this._securityToken) {
+      return Promise.resolve(returnError(13));
     }
 
     return request({
       method: 'GET',
-      uri: endpoint + '/api/v4/deviceattribute/getdeviceattribute',
+      uri: `${endpoint}/api/v4/deviceattribute/getdeviceattribute`,
       qs: {
         appId: appId,
-        SecurityToken: this.securityToken,
+        SecurityToken: this._securityToken,
         MyQDeviceId: id,
         AttributeName: attributeName
       },
@@ -151,6 +163,12 @@ class MyQ {
     }).then((response) => {
       if (!response) {
         return returnError(12);
+      } else if (response.ReturnCode === '-3333') {
+        return returnError(13, response);
+      } else if (!response.ReturnCode) {
+        return returnError(11, response);
+      } else if (!response.AttributeValue) {
+        return returnError(15, response);
       }
 
       const state = parseInt(response.AttributeValue);
@@ -160,6 +178,10 @@ class MyQ {
       };
       return result;
     }).catch((err) => {
+      if (err.statusCode === 400) {
+        return returnError(15, err);
+      }
+
       throw err;
     });
   };
@@ -175,8 +197,7 @@ class MyQ {
         delete result.state;
         return result;
       }).catch((err) => {
-        console.error(err);
-        return returnError(11);
+        return returnError(11, err);
       });
   };
 
@@ -191,31 +212,23 @@ class MyQ {
         delete result.state;
         return result;
       }).catch((err) => {
-        console.error(err);
-        return returnError(11);
+        return returnError(11, err);
       });
   };
 
   _setDeviceState(id, toggle, attributeName) {
-    if (!this.securityToken) {
-      return returnError(13);
-    }
-
-    let newState;
-    if (toggle == 0) {
-      newState = 2;
-    } else if (toggle == 1) {
-      newState = 1;
-    } else {
-      return returnError(15);
+    if (!this._securityToken) {
+      return Promise.resolve(returnError(13));
+    } else if (toggle !== 0 && toggle !== 1) {
+      return Promise.resolve(returnError(15));
     }
 
     return request({
       method: 'PUT',
-      uri: endpoint + '/api/v4/deviceattribute/putdeviceattribute',
+      uri: `${endpoint}/api/v4/deviceattribute/putdeviceattribute`,
       headers: {
         MyQApplicationId: appId,
-        securityToken: this.securityToken
+        securityToken: this._securityToken
       },
       body: {
         MyQDeviceId: id,
@@ -226,6 +239,10 @@ class MyQ {
     }).then((response) => {
       if (!response) {
         return returnError(12);
+      } else if (response.ReturnCode === '-3333') {
+        return returnError(13, response);
+      } else if (!response.ReturnCode) {
+        return returnError(11, response);
       }
 
       const result = {
@@ -233,6 +250,10 @@ class MyQ {
       };
       return result;
     }).catch((err) => {
+      if (err.statusCode === 500) {
+        return returnError(15, err);
+      }
+
       throw err;
     });
   };
@@ -242,8 +263,7 @@ class MyQ {
       .then((result) => {
         return result;
       }).catch((err) => {
-        console.error(err);
-        return returnError(11);
+        return returnError(11, err);
       });
   };
 
@@ -252,27 +272,7 @@ class MyQ {
       .then((result) => {
         return result;
       }).catch((err) => {
-        console.error(err);
-        return returnError(11);
-      });
-  };
-
-  _loopDoorState(doorId, newState) {
-    return this.getDoorState(doorId)
-      .then((result) => {
-        if (result.returnCode !== 0) {
-          return result;
-        }
-        
-        if (result.state === newState) {
-          return result;
-        } else {
-          setTimeout(() => {
-            return this._loopDoorState(doorId, newState);
-          }, 2500);
-        }
-      }).catch((err) => {
-        throw err;
+        return returnError(11, err);
       });
   };
 };

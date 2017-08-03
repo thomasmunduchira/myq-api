@@ -79,7 +79,7 @@ Example returned object if call is successful:
 ```js
 {
   "returnCode": 0,
-  "devices": [
+  "3": [
     {
       "id": 481404100,
       "typeId": 3,
@@ -89,7 +89,9 @@ Example returned object if call is successful:
       "name": "Light",
       "lightState": 2,
       "lightStateUpdated": 1501609106061
-    },
+    }
+  ],
+  "15": [
     {
       "id": 2323893289,
       "typeId": 15,
@@ -97,7 +99,9 @@ Example returned object if call is successful:
       "serialNumber": "DS4613424DJJS",
       "online": true,
       "name": "Home"
-    },
+    }
+  ],
+  "17": [
     {
       "id": 1631093013,
       "typeId": 17,
@@ -259,15 +263,15 @@ Example returned object if call is successful:
 
 Each call to the API will include a return code as well as an error message if applicable. The return codes as well their correlated messages have been listed here for convenience.
 
-| Return Code | Message                                                         |
-|-------------|-----------------------------------------------------------------|
-| 0           | Successful!                                                     |
-| 11          | Something unexpected happened. Please wait a bit and try again. |
-| 12          | MyQ service is currently down. Please wait a bit and try again. |
-| 13          | Not logged in.                                                  |
-| 14          | Email and/or password are incorrect.                            |
-| 15          | Invalid parameter provided.                                     |
-| 16          | User is locked out due to too many tries. Please go to the MyQ website and click "Forgot Password" to reset the password and gain access to the account. Note that it might take a while before being able to login through this application again - this error might keep popping up despite having unlocked the account. |
+| Return Code | Message                                                                         |
+|-------------|---------------------------------------------------------------------------------|
+| 0           | Successful!                                                                     |
+| 11          | Something unexpected happened. Please wait a bit and try again.                 |
+| 12          | MyQ service is currently down. Please wait a bit and try again.                 |
+| 13          | Not logged in.                                                                  |
+| 14          | Email and/or password are incorrect.                                            |
+| 15          | Invalid parameter(s) provided.                                                  |
+| 16          | User is locked out due to too many tries. Please wait 10 minutes and try again. |
 
 Example returned object if call is unsuccessful:
 ```js
