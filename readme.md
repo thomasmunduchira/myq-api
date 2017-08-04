@@ -22,7 +22,7 @@ yarn add myq-api
 
 ### new MyQ(email, password)
 
-Initialize credentials of the user.
+Initialize credentials of the user using email and password.
 
 | Parameters | Required | Type   | Details         |
 |------------|----------|--------|-----------------|
@@ -35,9 +35,25 @@ const MyQ = require('myq-api');
 const account = new MyQ('email', 'password');
 ```
 
+### new MyQ(securityToken)
+
+Initialize credentials of the user using a security token.
+
+| Parameters    | Required | Type   | Details             |
+|---------------|----------|--------|---------------------|
+| securityToken | true     | String | User security token |
+
+Example code:
+```js
+const MyQ = require('myq-api');
+const account = new MyQ('securityToken');
+```
+
 ### account.login()
 
-Logs into your MyQ account and returns your account security token. Running this function is a prerequisite to running other functions that make up this API.
+Note: only use this when credentials are initialized using an email and password.
+
+Logs into your MyQ account and generates a security token. This security token must be generated before you access the rest of the API.
 
 Example code:
 ```js
@@ -79,7 +95,7 @@ Example returned object if call is successful:
 ```js
 {
   "returnCode": 0,
-  "3": [
+  "devices": [
     {
       "id": 481404100,
       "typeId": 3,
@@ -89,9 +105,7 @@ Example returned object if call is successful:
       "name": "Light",
       "lightState": 2,
       "lightStateUpdated": 1501609106061
-    }
-  ],
-  "15": [
+    },
     {
       "id": 2323893289,
       "typeId": 15,
@@ -99,9 +113,7 @@ Example returned object if call is successful:
       "serialNumber": "DS4613424DJJS",
       "online": true,
       "name": "Home"
-    }
-  ],
-  "17": [
+    },
     {
       "id": 1631093013,
       "typeId": 17,

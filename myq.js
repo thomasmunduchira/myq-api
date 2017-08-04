@@ -28,8 +28,12 @@ const returnError = (returnCode, err) => {
 
 class MyQ {
   constructor(username, password) {
-    this._username = username;
-    this._password = password;
+    if (!password) {
+      this._securityToken = username;
+    } else {
+      this._username = username;
+      this._password = password;
+    }
   };
 
   login() {
