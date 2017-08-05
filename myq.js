@@ -11,7 +11,8 @@ const errors = {
   13: 'Not logged in.',
   14: 'Email and/or password are incorrect.',
   15: 'Invalid parameter(s) provided.',
-  16: 'User is locked out due to too many tries. Please wait 10 minutes and try again.'
+  16: 'User will be locked out due to too many tries. 1 try left.',
+  17: 'User is locked out due to too many tries. Please reset password and try again.'
 };
 
 const returnError = (returnCode, err) => {
@@ -28,12 +29,8 @@ const returnError = (returnCode, err) => {
 
 class MyQ {
   constructor(username, password) {
-    if (!password) {
-      this._securityToken = username;
-    } else {
-      this._username = username;
-      this._password = password;
-    }
+    this._username = username;
+    this._password = password;
   };
 
   login() {
@@ -57,6 +54,10 @@ class MyQ {
         return returnError(12);
       } else if (response.ReturnCode === '203') {
         return returnError(14, response);
+      } else if (response.ReturnCode === '205') {
+        return returnError(16, response);
+      } else if (response.ReturnCode === '207') {
+        return returnError(17, response);
       } else if (!response.SecurityToken) {
         return returnError(11, response);
       }
@@ -68,9 +69,7 @@ class MyQ {
       };
       return result;
     }).catch((err) => {
-      if (err.message === 'Error: read ECONNRESET') {
-        return returnError(16, err);
-      } else if (err.statusCode === 500) {
+      if (err.statusCode === 500) {
         return returnError(14, err);
       } else {
         return returnError(11, err);
@@ -103,7 +102,7 @@ class MyQ {
       json: true
     }).then((response) => {
       if (!response) {
-        return returnError(12);
+        return returnError(12, response);
       } else if (response.ReturnCode === '-3333') {
         return returnError(13, response);
       } else if (!response.Devices) {
@@ -116,38 +115,37 @@ class MyQ {
 
       const modifiedDevices = [];
       for (let device of response.Devices) {
-        if (typeIds.includes(device.MyQDeviceTypeId)) {
-          const modifiedDevice = {
-            id: device.MyQDeviceId,
-            typeId: device.MyQDeviceTypeId,
-            typeName: device.MyQDeviceTypeName,
-            serialNumber: device.SerialNumber
-          };
-          for (let attribute of device.Attributes) {
-            if (attribute.AttributeDisplayName === 'online') {
-              modifiedDevice.online = attribute.Value === 'True';
-            }
-            if (attribute.AttributeDisplayName === 'desc') {
-              modifiedDevice.name = attribute.Value;
-            }
-            if (attribute.AttributeDisplayName === 'doorstate') {
-              modifiedDevice.doorState = parseInt(attribute.Value);
-              modifiedDevice.doorStateUpdated = parseInt(attribute.UpdatedTime);
-            }
-            if (attribute.AttributeDisplayName === 'lightstate') {
-              modifiedDevice.lightState = parseInt(attribute.Value);
-              modifiedDevice.lightStateUpdated = parseInt(attribute.UpdatedTime);
-            }
-          }
-          modifiedDevices.push(modifiedDevice);
+        if (!typeIds.includes(device.MyQDeviceTypeId)) {
+          continue;
         }
+
+        const modifiedDevice = {
+          id: device.MyQDeviceId,
+          typeId: device.MyQDeviceTypeId,
+          typeName: device.MyQDeviceTypeName,
+          serialNumber: device.SerialNumber
+        };
+        for (let attribute of device.Attributes) {
+          if (attribute.AttributeDisplayName === 'online') {
+            modifiedDevice.online = attribute.Value === 'True';
+          } else if (attribute.AttributeDisplayName === 'desc') {
+            modifiedDevice.name = attribute.Value;
+          } else if (attribute.AttributeDisplayName === 'doorstate') {
+            modifiedDevice.doorState = parseInt(attribute.Value);
+            modifiedDevice.doorStateUpdated = parseInt(attribute.UpdatedTime);
+          } else if (attribute.AttributeDisplayName === 'lightstate') {
+            modifiedDevice.lightState = parseInt(attribute.Value);
+            modifiedDevice.lightStateUpdated = parseInt(attribute.UpdatedTime);
+          }
+        }
+        modifiedDevices.push(modifiedDevice);
       }
       result.devices = modifiedDevices;
       return result;
     }).catch((err) => {
       return returnError(11, err);
     });
-  }
+  };
 
   _getDeviceState(id, attributeName) {
     if (!this._securityToken) {
@@ -242,7 +240,7 @@ class MyQ {
       json: true
     }).then((response) => {
       if (!response) {
-        return returnError(12);
+        return returnError(12, response);
       } else if (response.ReturnCode === '-3333') {
         return returnError(13, response);
       } else if (!response.ReturnCode) {

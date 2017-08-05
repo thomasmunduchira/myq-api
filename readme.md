@@ -35,25 +35,9 @@ const MyQ = require('myq-api');
 const account = new MyQ('email', 'password');
 ```
 
-### new MyQ(securityToken)
-
-Initialize credentials of the user using a security token.
-
-| Parameters    | Required | Type   | Details             |
-|---------------|----------|--------|---------------------|
-| securityToken | true     | String | User security token |
-
-Example code:
-```js
-const MyQ = require('myq-api');
-const account = new MyQ('securityToken');
-```
-
 ### account.login()
 
-Note: only use this when credentials are initialized using an email and password.
-
-Logs into your MyQ account and generates a security token. This security token must be generated before you access the rest of the API.
+Logs into your MyQ account and generates a security token. This security token must be generated before you access the rest of the API. Note that this security token is short-term and will not work after some time.
 
 Example code:
 ```js
@@ -283,7 +267,8 @@ Each call to the API will include a return code as well as an error message if a
 | 13          | Not logged in.                                                                  |
 | 14          | Email and/or password are incorrect.                                            |
 | 15          | Invalid parameter(s) provided.                                                  |
-| 16          | User is locked out due to too many tries. Please wait 10 minutes and try again. |
+| 16          | User will be locked out due to too many tries. 1 try left.                      |
+| 17          | User is locked out due to too many tries. Please reset password and try again.  |
 
 Example returned object if call is unsuccessful:
 ```js
