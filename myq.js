@@ -1,5 +1,4 @@
 // UPDATED VERSION OF https://github.com/chadsmith/node-liftmaster/blob/master/liftmaster.js
-
 const request = require('request-promise-native');
 
 const endpoint = 'https://myqexternal.myqdevice.com';
@@ -16,7 +15,7 @@ const errors = {
 };
 
 const returnError = (returnCode, err) => {
-  console.log(`Handled (${returnCode})`); 
+  console.log(`Handled (${returnCode})`);
   if (err) {
     console.log('Error:', err);
   }
@@ -25,13 +24,13 @@ const returnError = (returnCode, err) => {
     error: errors[returnCode]
   };
   return result;
-}
+};
 
 class MyQ {
   constructor(username, password) {
     this._username = username;
     this._password = password;
-  };
+  }
 
   login() {
     if (!this._username || !this._password) {
@@ -75,7 +74,7 @@ class MyQ {
         return returnError(11, err);
       }
     });
-  };
+  }
 
   getDevices(typeIds) {
     if (!this._securityToken) {
@@ -90,7 +89,7 @@ class MyQ {
       if (!allTypeIds.includes(typeId)) {
         return returnError(15);
       }
-    };
+    }
 
     return request({
       method: 'GET',
@@ -145,7 +144,7 @@ class MyQ {
     }).catch((err) => {
       return returnError(11, err);
     });
-  };
+  }
 
   _getDeviceState(id, attributeName) {
     if (!this._securityToken) {
@@ -186,7 +185,7 @@ class MyQ {
 
       throw err;
     });
-  };
+  }
 
   getDoorState(id) {
     return this._getDeviceState(id, 'doorstate')
@@ -201,7 +200,7 @@ class MyQ {
       }).catch((err) => {
         return returnError(11, err);
       });
-  };
+  }
 
   getLightState(id) {
     return this._getDeviceState(id, 'lightstate')
@@ -216,7 +215,7 @@ class MyQ {
       }).catch((err) => {
         return returnError(11, err);
       });
-  };
+  }
 
   _setDeviceState(id, toggle, attributeName) {
     if (!this._securityToken) {
@@ -258,7 +257,7 @@ class MyQ {
 
       throw err;
     });
-  };
+  }
 
   setDoorState(id, toggle) {
     return this._setDeviceState(id, toggle, 'desireddoorstate')
@@ -267,7 +266,7 @@ class MyQ {
       }).catch((err) => {
         return returnError(11, err);
       });
-  };
+  }
 
   setLightState(id, toggle) {
     return this._setDeviceState(id, toggle, 'desiredlightstate')
@@ -276,7 +275,7 @@ class MyQ {
       }).catch((err) => {
         return returnError(11, err);
       });
-  };
-};
+  }
+}
 
 module.exports = MyQ;
