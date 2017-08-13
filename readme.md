@@ -87,7 +87,8 @@ Example returned object if call is successful:
       "serialNumber": "DAIIOW14411AW",
       "online": true,
       "name": "Light",
-      "lightState": 2,
+      "lightState": 0,
+      "lightStateDescription": "off"
       "lightStateUpdated": 1501609106061
     },
     {
@@ -105,7 +106,8 @@ Example returned object if call is successful:
       "serialNumber": "DS4l424DJJS",
       "online": true,
       "name": "Garage",
-      "doorState": 2,
+      "doorState": 1,
+      "doorStateDescription": "open"
       "doorStateUpdated": 1501609106061
     }
   ]
@@ -134,7 +136,8 @@ Example returned object if call is successful:
 ```js
 {
   "returnCode": 0,
-  "doorState": doorState // See Possible Values
+  "doorState": 2, // See Possible Values
+  "doorStateDescription": "closed"
 }
 ```
 
@@ -160,7 +163,8 @@ Example returned object if call is successful:
 ```js
 {
   "returnCode": 0,
-  "lightState": lightState // See Possible Values
+  "lightState": 1, // See Possible Values
+  "lightStateDescription": "on"
 }
 ```
 

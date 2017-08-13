@@ -13,6 +13,18 @@ const errors = {
   16: 'User will be locked out due to too many tries. 1 try left.',
   17: 'User is locked out due to too many tries. Please reset password and try again.'
 };
+const doorStates = {
+  1: 'open',
+  2: 'closed',
+  3: 'stopped in the middle',
+  4: 'going up',
+  5: 'going down',
+  9: 'not closed'
+};
+const lightStates = {
+  0: 'off',
+  1: 'on'
+};
 
 const returnError = (returnCode, err) => {
   console.log(`Handled (${returnCode})`);
@@ -131,9 +143,11 @@ class MyQ {
             modifiedDevice.name = attribute.Value;
           } else if (attribute.AttributeDisplayName === 'doorstate') {
             modifiedDevice.doorState = parseInt(attribute.Value);
+            modifiedDevice.doorStateDescription = doorStates[modifiedDevice.doorState];
             modifiedDevice.doorStateUpdated = parseInt(attribute.UpdatedTime);
           } else if (attribute.AttributeDisplayName === 'lightstate') {
             modifiedDevice.lightState = parseInt(attribute.Value);
+            modifiedDevice.lightStateDescription = lightStates[modifiedDevice.lightState];
             modifiedDevice.lightStateUpdated = parseInt(attribute.UpdatedTime);
           }
         }
@@ -175,7 +189,7 @@ class MyQ {
       const state = parseInt(response.AttributeValue);
       const result = {
         returnCode: 0,
-        state
+        state,
       };
       return result;
     }).catch((err) => {
@@ -195,6 +209,7 @@ class MyQ {
         }
 
         result.doorState = result.state;
+        result.doorStateDescription = doorStates[result.doorState];
         delete result.state;
         return result;
       }).catch((err) => {
@@ -210,6 +225,7 @@ class MyQ {
         }
 
         result.lightState = result.state;
+        result.lightStateDescription = lightStates[result.lightState];
         delete result.state;
         return result;
       }).catch((err) => {
