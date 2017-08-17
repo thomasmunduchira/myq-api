@@ -1,10 +1,26 @@
 {
   "name": "myq-api",
-  "description": "An updated API to interface with your MyQ garage doors",
-  "version": "0.0.2",
+  "version": "1.0.0",
+  "description": "An updated API to interface with your MyQ devices",
+  "keywords": [
+    "myq",
+    "liftmaster",
+    "chamberlain",
+    "garage door",
+    "lights",
+    "automation",
+    "home",
+    "api"
+  ],
+  "homepage": "https://github.com/thomasmunduchira/myq-api",
+  "bugs": {
+    "url": "https://github.com/thomasmunduchira/myq-api/issues"
+  },
+  "license": "MIT",
   "author": {
     "name": "Thomas Munduchira",
-    "email": "thomas@thomasmunduchira.com"
+    "email": "thomas@thomasmunduchira.com",
+    "url": "https://thomasmunduchira.com/"
   },
   "contributors": [
     {
@@ -13,28 +29,19 @@
       "url": "http://twitter.com/chadsmith"
     }
   ],
-  "keywords": [
-    "liftmaster",
-    "chamberlain",
-    "myq",
-    "garage door",
-    "automation",
-    "api"
-  ],
   "main": "./myq.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "homepage": "https://github.com/thomasmunduchira/node-liftmaster",
   "repository": {
     "type": "git",
-    "url": "https://github.com/thomasmunduchira/node-liftmaster.git"
+    "url": "https://github.com/thomasmunduchira/myq-api.git"
   },
-  "bugs": {
-    "url": "https://github.com/thomasmunduchira/node-liftmaster/issues"
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "request": "^2.81.0",
     "request-promise-native": "^1.0.4"
+  },
+  "engines": {
+    "node" : ">4"
   }
 }

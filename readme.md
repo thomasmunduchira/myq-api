@@ -284,11 +284,11 @@ Example returned object if call is unsuccessful:
 
 ## TODO
 
-See the [issue tracker](http://github.com/thomasmunduchira/node-liftmaster/issues) for more.
+See the [issue tracker](http://github.com/thomasmunduchira/myq-api/issues) for more.
 
 ## Author
 
-[Thomas Munduchira]() ([thomas@thomasmunduchira.com](mailto:thomas@thomasmunduchira.com))
+[Thomas Munduchira](https://thomasmunduchira.com/) ([thomas@thomasmunduchira.com](mailto:thomas@thomasmunduchira.com))
 
 ## Original Author
 
@@ -296,4 +296,4 @@ See the [issue tracker](http://github.com/thomasmunduchira/node-liftmaster/issue
 
 ## License
 
-This project is [UNLICENSED](http://unlicense.org/) and not endorsed by or affiliated with [Chamberlain](https://www.chamberlain.com/) or [LiftMaster](https://www.liftmaster.com/).
+[MIT](https://github.com/thomasmunduchira/myq-api/blob/master/LICENSE)
