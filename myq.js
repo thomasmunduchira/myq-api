@@ -1,5 +1,5 @@
 // UPDATED VERSION OF https://github.com/chadsmith/node-liftmaster/blob/master/liftmaster.js
-const request = require('request-promise-native');
+const axios = require('axios');
 
 const constants = require('./config/constants');
 
@@ -26,35 +26,38 @@ class MyQ {
       return Promise.resolve(returnError(14));
     }
 
-    return request({
-      method: 'POST',
-      uri: `${constants.endpoint}/api/v4/User/Validate`,
+    return axios({
+      method: 'post',
+      url: `${constants.endpoint}/api/v4/User/Validate`,
       headers: {
         MyQApplicationId: constants.appId,
       },
-      body: {
+      data: {
         username: this._username,
         password: this._password,
       },
-      json: true,
     })
       .then(response => {
-        if (!response) {
+        if (!response || !response.data) {
           return returnError(12);
-        } else if (response.ReturnCode === '203') {
-          return returnError(14, response);
-        } else if (response.ReturnCode === '205') {
-          return returnError(16, response);
-        } else if (response.ReturnCode === '207') {
-          return returnError(17, response);
-        } else if (!response.SecurityToken) {
-          return returnError(11, response);
         }
 
-        this._securityToken = response.SecurityToken;
+        const { data } = response;
+
+        if (data.ReturnCode === '203') {
+          return returnError(14, data);
+        } else if (data.ReturnCode === '205') {
+          return returnError(16, data);
+        } else if (data.ReturnCode === '207') {
+          return returnError(17, data);
+        } else if (!data.SecurityToken) {
+          return returnError(11, data);
+        }
+
+        this._securityToken = data.SecurityToken;
         const result = {
           returnCode: 0,
-          token: response.SecurityToken,
+          token: data.SecurityToken,
         };
         return result;
       })
@@ -82,22 +85,25 @@ class MyQ {
       }
     }
 
-    return request({
-      method: 'GET',
-      uri: `${constants.endpoint}/api/v4/userdevicedetails/get`,
-      qs: {
+    return axios({
+      method: 'get',
+      url: `${constants.endpoint}/api/v4/userdevicedetails/get`,
+      params: {
         appId: constants.appId,
         SecurityToken: this._securityToken,
       },
-      json: true,
     })
       .then(response => {
-        if (!response) {
-          return returnError(12, response);
-        } else if (response.ReturnCode === '-3333') {
-          return returnError(13, response);
-        } else if (!response.Devices) {
-          return returnError(11, response);
+        if (!response || !response.data) {
+          return returnError(12);
+        }
+
+        const { data } = response;
+
+        if (data.ReturnCode === '-3333') {
+          return returnError(13, data);
+        } else if (!data.Devices) {
+          return returnError(11, data);
         }
 
         const result = {
@@ -105,8 +111,8 @@ class MyQ {
         };
 
         const modifiedDevices = [];
-        for (let i = 0; i < response.Devices.length; i += 1) {
-          const device = response.Devices[i];
+        for (let i = 0; i < data.Devices.length; i += 1) {
+          const device = data.Devices[i];
           if (typeIds.includes(device.MyQDeviceTypeId)) {
             const modifiedDevice = {
               id: device.MyQDeviceId,
@@ -146,29 +152,32 @@ class MyQ {
       return Promise.resolve(returnError(13));
     }
 
-    return request({
-      method: 'GET',
-      uri: `${constants.endpoint}/api/v4/deviceattribute/getdeviceattribute`,
-      qs: {
+    return axios({
+      method: 'get',
+      url: `${constants.endpoint}/api/v4/deviceattribute/getdeviceattribute`,
+      params: {
         appId: constants.appId,
         SecurityToken: this._securityToken,
         MyQDeviceId: id,
         AttributeName: attributeName,
       },
-      json: true,
     })
       .then(response => {
-        if (!response) {
+        if (!response || !response.data) {
           return returnError(12);
-        } else if (response.ReturnCode === '-3333') {
-          return returnError(13, response);
-        } else if (!response.ReturnCode) {
-          return returnError(11, response);
-        } else if (!response.AttributeValue) {
-          return returnError(15, response);
         }
 
-        const state = parseInt(response.AttributeValue, 10);
+        const { data } = response;
+
+        if (data.ReturnCode === '-3333') {
+          return returnError(13, data);
+        } else if (!data.ReturnCode) {
+          return returnError(11, data);
+        } else if (!data.AttributeValue) {
+          return returnError(15, data);
+        }
+
+        const state = parseInt(data.AttributeValue, 10);
         const result = {
           returnCode: 0,
           state,
@@ -223,27 +232,30 @@ class MyQ {
       return Promise.resolve(returnError(15));
     }
 
-    return request({
-      method: 'PUT',
-      uri: `${constants.endpoint}/api/v4/deviceattribute/putdeviceattribute`,
+    return axios({
+      method: 'put',
+      url: `${constants.endpoint}/api/v4/deviceattribute/putdeviceattribute`,
       headers: {
         MyQApplicationId: constants.appId,
         securityToken: this._securityToken,
       },
-      body: {
+      data: {
         MyQDeviceId: id,
         AttributeName: attributeName,
         AttributeValue: toggle,
       },
-      json: true,
     })
       .then(response => {
-        if (!response) {
-          return returnError(12, response);
-        } else if (response.ReturnCode === '-3333') {
-          return returnError(13, response);
-        } else if (!response.ReturnCode) {
-          return returnError(11, response);
+        if (!response || !response.data) {
+          return returnError(12);
+        }
+
+        const { data } = response;
+
+        if (data.ReturnCode === '-3333') {
+          return returnError(13, data);
+        } else if (!data.ReturnCode) {
+          return returnError(11, data);
         }
 
         const result = {
