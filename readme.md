@@ -1,21 +1,11 @@
 # myq-api
 
-Interface with your [MyQ](https://www.liftmaster.com/for-homes/myq-connected-home?gclid=CjwKCAjw2NvLBRAjEiwAF98GMePqZknk7-vCeYlvOITPCbuuhbUBgB8XqIF61GsimwJAmjQHIZvgLRoCgSMQAvD_BwE&gclsrc=aw.ds) devices.
-
-This is an updated API forked from [this repository](https://github.com/chadsmith/node-liftmaster). This module uses ES6 syntax and promises.
-
-Pull requests welcome!
+Interface with your [MyQ](https://www.liftmaster.com/for-homes/myq-connected-home) devices. Works with both Chamberlain and LiftMaster.
 
 ## Installation
 
 ```bash
-npm install myq-api --save
-```
-
-or 
-
-```bash
-yarn add myq-api
+npm install myq-api --save   or   yarn add myq-api
 ```
 
 ## Usage Overview
@@ -282,9 +272,15 @@ Example returned object if call is unsuccessful:
 }
 ```
 
-## TODO
+## Examples
+Located in the examples folder in the repository.
 
-See the [issue tracker](http://github.com/thomasmunduchira/myq-api/issues) for more.
+## Contributing
+
+If you would like to contribute enhancements or fixes, please do the following:
+1. Fork the repository and clone it locally.
+2. Make your changes.
+3. Create a pull request.
 
 ## Author
 

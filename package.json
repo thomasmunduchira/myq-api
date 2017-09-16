@@ -35,11 +35,21 @@
     "url": "https://github.com/thomasmunduchira/myq-api.git"
   },
   "scripts": {
+    "lint": "eslint ./",
+    "fix": "eslint --fix ./",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "request": "^2.81.0",
+    "request": "2.81.0",
     "request-promise-native": "^1.0.4"
+  },
+  "devDependencies": {
+    "eslint": "4.5.0",
+    "eslint-config-airbnb-base": "11.3.1",
+    "eslint-config-prettier": "2.4.0",
+    "eslint-plugin-import": "2.7.0",
+    "eslint-plugin-prettier": "2.2.0",
+    "prettier": "1.6.1"
   },
   "engines": {
     "node" : ">4"
