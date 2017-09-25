@@ -1,28 +1,27 @@
 // UPDATED VERSION OF https://github.com/chadsmith/node-liftmaster/blob/master/liftmaster.js
 const axios = require('axios');
 
-const constants = require('./config/constants');
+const constants = require('./constants');
 
 const returnError = (returnCode, err) => {
-  console.log(`Handled (${returnCode})`);
-  if (err) {
-    console.log('Error:', err);
-  }
   const result = {
     returnCode,
-    error: constants.errors[returnCode],
+    message: constants.errorMessages[returnCode],
   };
+  if (err) {
+    result.unhandledError = err;
+  }
   return result;
 };
 
 class MyQ {
   constructor(username, password) {
-    this._username = username;
-    this._password = password;
+    this.username = username;
+    this.password = password;
   }
 
   login() {
-    if (!this._username || !this._password) {
+    if (!this.username || !this.password) {
       return Promise.resolve(returnError(14));
     }
 
@@ -33,8 +32,8 @@ class MyQ {
         MyQApplicationId: constants.appId,
       },
       data: {
-        username: this._username,
-        password: this._password,
+        username: this.username,
+        password: this.password,
       },
     })
       .then(response => {
@@ -45,16 +44,16 @@ class MyQ {
         const { data } = response;
 
         if (data.ReturnCode === '203') {
-          return returnError(14, data);
+          return returnError(14);
         } else if (data.ReturnCode === '205') {
-          return returnError(16, data);
+          return returnError(16);
         } else if (data.ReturnCode === '207') {
-          return returnError(17, data);
+          return returnError(17);
         } else if (!data.SecurityToken) {
-          return returnError(11, data);
+          return returnError(11);
         }
 
-        this._securityToken = data.SecurityToken;
+        this.securityToken = data.SecurityToken;
         const result = {
           returnCode: 0,
           token: data.SecurityToken,
@@ -63,14 +62,15 @@ class MyQ {
       })
       .catch(err => {
         if (err.statusCode === 500) {
-          return returnError(14, err);
+          return returnError(14);
         }
+
         return returnError(11, err);
       });
   }
 
   getDevices(typeIdParams) {
-    if (!this._securityToken) {
+    if (!this.securityToken) {
       return Promise.resolve(returnError(13));
     } else if (typeIdParams === null) {
       return Promise.resolve(returnError(15));
@@ -90,7 +90,7 @@ class MyQ {
       url: `${constants.endpoint}/api/v4/userdevicedetails/get`,
       params: {
         appId: constants.appId,
-        SecurityToken: this._securityToken,
+        SecurityToken: this.securityToken,
       },
     })
       .then(response => {
@@ -101,9 +101,9 @@ class MyQ {
         const { data } = response;
 
         if (data.ReturnCode === '-3333') {
-          return returnError(13, data);
+          return returnError(13);
         } else if (!data.Devices) {
-          return returnError(11, data);
+          return returnError(11);
         }
 
         const result = {
@@ -147,8 +147,8 @@ class MyQ {
       .catch(err => returnError(11, err));
   }
 
-  _getDeviceState(id, attributeName) {
-    if (!this._securityToken) {
+  getDeviceState(id, attributeName) {
+    if (!this.securityToken) {
       return Promise.resolve(returnError(13));
     }
 
@@ -157,7 +157,7 @@ class MyQ {
       url: `${constants.endpoint}/api/v4/deviceattribute/getdeviceattribute`,
       params: {
         appId: constants.appId,
-        SecurityToken: this._securityToken,
+        SecurityToken: this.securityToken,
         MyQDeviceId: id,
         AttributeName: attributeName,
       },
@@ -170,11 +170,11 @@ class MyQ {
         const { data } = response;
 
         if (data.ReturnCode === '-3333') {
-          return returnError(13, data);
+          return returnError(13);
         } else if (!data.ReturnCode) {
-          return returnError(11, data);
+          return returnError(11);
         } else if (!data.AttributeValue) {
-          return returnError(15, data);
+          return returnError(15);
         }
 
         const state = parseInt(data.AttributeValue, 10);
@@ -186,15 +186,15 @@ class MyQ {
       })
       .catch(err => {
         if (err.statusCode === 400) {
-          return returnError(15, err);
+          return returnError(15);
         }
 
-        throw err;
+        return returnError(11, err);
       });
   }
 
   getDoorState(id) {
-    return this._getDeviceState(id, 'doorstate')
+    return this.getDeviceState(id, 'doorstate')
       .then(result => {
         if (result.returnCode !== 0) {
           return result;
@@ -210,7 +210,7 @@ class MyQ {
   }
 
   getLightState(id) {
-    return this._getDeviceState(id, 'lightstate')
+    return this.getDeviceState(id, 'lightstate')
       .then(result => {
         if (result.returnCode !== 0) {
           return result;
@@ -225,8 +225,8 @@ class MyQ {
       .catch(err => returnError(11, err));
   }
 
-  _setDeviceState(id, toggle, attributeName) {
-    if (!this._securityToken) {
+  setDeviceState(id, toggle, attributeName) {
+    if (!this.securityToken) {
       return Promise.resolve(returnError(13));
     } else if (toggle !== 0 && toggle !== 1) {
       return Promise.resolve(returnError(15));
@@ -237,7 +237,7 @@ class MyQ {
       url: `${constants.endpoint}/api/v4/deviceattribute/putdeviceattribute`,
       headers: {
         MyQApplicationId: constants.appId,
-        securityToken: this._securityToken,
+        securityToken: this.securityToken,
       },
       data: {
         MyQDeviceId: id,
@@ -253,9 +253,9 @@ class MyQ {
         const { data } = response;
 
         if (data.ReturnCode === '-3333') {
-          return returnError(13, data);
+          return returnError(13);
         } else if (!data.ReturnCode) {
-          return returnError(11, data);
+          return returnError(11);
         }
 
         const result = {
@@ -265,21 +265,21 @@ class MyQ {
       })
       .catch(err => {
         if (err.statusCode === 500) {
-          return returnError(15, err);
+          return returnError(15);
         }
 
-        throw err;
+        return returnError(11, err);
       });
   }
 
   setDoorState(id, toggle) {
-    return this._setDeviceState(id, toggle, 'desireddoorstate')
+    return this.setDeviceState(id, toggle, 'desireddoorstate')
       .then(result => result)
       .catch(err => returnError(11, err));
   }
 
   setLightState(id, toggle) {
-    return this._setDeviceState(id, toggle, 'desiredlightstate')
+    return this.setDeviceState(id, toggle, 'desiredlightstate')
       .then(result => result)
       .catch(err => returnError(11, err));
   }

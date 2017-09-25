@@ -1,12 +1,13 @@
 {
   "name": "myq-api",
-  "version": "1.0.0",
-  "description": "An updated API to interface with your MyQ devices",
+  "version": "0.0.1",
+  "description": "An updated API to interface with MyQ devices",
   "keywords": [
     "myq",
-    "liftmaster",
     "chamberlain",
+    "liftmaster",
     "garage door",
+    "door",
     "lights",
     "automation",
     "home",
@@ -29,12 +30,13 @@
       "url": "http://twitter.com/chadsmith"
     }
   ],
-  "main": "./myq.js",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/thomasmunduchira/myq-api.git"
   },
   "scripts": {
+    "build": "babel src --out-dir dist --presets=env",
     "lint": "eslint ./",
     "fix": "eslint --fix ./",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -43,14 +45,13 @@
     "axios": "0.16.2"
   },
   "devDependencies": {
+    "babel-cli": "6.26.0",
+    "babel-preset-env": "1.6.0",
     "eslint": "4.5.0",
     "eslint-config-airbnb-base": "11.3.1",
     "eslint-config-prettier": "2.4.0",
     "eslint-plugin-import": "2.7.0",
     "eslint-plugin-prettier": "2.2.0",
     "prettier": "1.6.1"
-  },
-  "engines": {
-    "node": ">4"
   }
 }

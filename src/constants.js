@@ -2,7 +2,7 @@ const constants = {
   endpoint: 'https://myqexternal.myqdevice.com',
   appId: 'NWknvuBd7LoFHfXmKNMBcgajXtZEgKUh4V7WNzMidrpUUluDpVYVZx+xT4PCM5Kx',
   allTypeIds: [1, 2, 3, 5, 7, 9, 13, 15, 16, 17],
-  errors: {
+  errorMessages: {
     11: 'Something unexpected happened. Please wait a bit and try again.',
     12: 'MyQ service is currently down. Please wait a bit and try again.',
     13: 'Not logged in.',

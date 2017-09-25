@@ -1,11 +1,11 @@
 # myq-api
 
-Interface with your [MyQ](https://www.liftmaster.com/for-homes/myq-connected-home) devices. Works with both Chamberlain and LiftMaster.
+Interface with your [MyQ](https://www.liftmaster.com/for-homes/myq-connected-home) devices. Works and tested with both Chamberlain and LiftMaster.
 
 ## Installation
 
 ```bash
-npm install myq-api --save   or   yarn add myq-api
+yarn add myq-api   or   npm install myq-api
 ```
 
 ## Usage Overview
@@ -21,20 +21,20 @@ Initialize credentials of the user using email and password.
 
 Example code:
 ```js
-const MyQ = require('myq-api');
-const account = new MyQ('email', 'password');
+var MyQ = require('myq-api');
+var account = new MyQ('email', 'password');
 ```
 
 ### account.login()
 
-Logs into your MyQ account and generates a security token. This security token must be generated before you access the rest of the API. Note that this security token is short-term and will not work after some time.
+Logs into the MyQ account and generates a security token. This security token must be generated before you access the rest of this API. Note that this security token is short-term and will not work after some time.
 
 Example code:
 ```js
 account.login()
-  .then((result) => {
-
-  }).catch((err) => {
+  .then(function (result) {
+    console.log(result);
+  }).catch(function (err) {
     console.error(err);
   });
 ```
@@ -58,9 +58,9 @@ Returns devices on the account.
 Example code:
 ```js
 account.getDevices([3, 15, 17])
-  .then((result) => {
-
-  }).catch((err) => {
+  .then(function (result) {
+    console.log(result);
+  }).catch(function (err) {
     console.error(err);
   });
 ```
@@ -110,14 +110,14 @@ Retrieves the latest state of the requested door.
 
 | Parameter | Required | Type    | Details |
 |-----------|----------|---------|---------|
-| id        | true     | Integer | Door id |
+| id        | true     | Integer | Door ID |
 
 Example code:
 ```js
 account.getDoorState(door.id)
-  .then((result) => {
-
-  }).catch((err) => {
+  .then(function (result) {
+    console.log(result);
+  }).catch(function (err) {
     console.error(err);
   });
 ```
@@ -137,14 +137,14 @@ Retrieves the latest state of the requested light.
 
 | Parameter | Required | Type    | Details  |
 |-----------|----------|---------|----------|
-| id        | true     | Integer | Light id |
+| id        | true     | Integer | Light ID |
 
 Example code:
 ```js
 account.getLightState(light.id)
-  .then((result) => {
-
-  }).catch((err) => {
+  .then(function (result) {
+    console.log(result);
+  }).catch(function (err) {
     console.error(err);
   });
 ```
@@ -164,15 +164,15 @@ Set the requested door to open or close. Returns a confirmation once complete. N
 
 | Parameter | Required | Type        | Details                           |
 |-----------|----------|-------------|-----------------------------------|
-| id        | true     | Integer     | Door id                           |
+| id        | true     | Integer     | Door ID                           |
 | toggle    | true     | Door Toggle | See Possible Values for more info |
 
 Example code:
 ```js
 account.setDoorState(door.id, 1)
-  .then((result) => {
-
-  }).catch((err) => {
+  .then(function (result) {
+    console.log(result);
+  }).catch(function (err) {
     console.error(err);
   });
 ```
@@ -190,15 +190,15 @@ Set the requested light to on or off. Returns a confirmation once complete.
 
 | Parameter | Required | Type         | Details                           |
 |-----------|----------|--------------|-----------------------------------|
-| id        | true     | Integer      | Light id                          |
+| id        | true     | Integer      | Light ID                          |
 | toggle    | true     | Light Toggle | See Possible Values for more info |
 
 Example code:
 ```js
 account.setLightState(light.id, 1)
-  .then((result) => {
-
-  }).catch((err) => {
+  .then(function (result) {
+    console.log(result);
+  }).catch(function (err) {
     console.error(err);
   });
 ```
@@ -212,7 +212,7 @@ Example returned object if call is successful:
 
 ## Possible Values
 
-| Type ID | Meaning                        |
+| Type ID | Description                    |
 |---------|--------------------------------|
 | 1       | Gateway                        |
 | 2       | GDO                            |
@@ -225,12 +225,12 @@ Example returned object if call is successful:
 | 16      | WGDO Gateway DC                |
 | 17      | WGDO Garage Door               |
 
-| Door Toggle | Meaning    |
-|-------------|------------|
-| 0           | close door |
-| 1           | open door  |
+| Door Toggle | Description |
+|-------------|-------------|
+| 0           | close door  |
+| 1           | open door   |
 
-| doorState | Meaning               |
+| doorState | Description           |
 |-----------|-----------------------|
 | 1         | open                  |
 | 2         | closed                |
@@ -239,15 +239,15 @@ Example returned object if call is successful:
 | 5         | going down            |
 | 9         | not closed            |
 
-| Light Toggle | Meaning        |
+| Light Toggle | Description    |
 |--------------|----------------|
 | 0            | turn off light |
 | 1            | turn on light  |
 
-| lightState   | Meaning |
-|--------------|---------|
-| 0            | off     |
-| 1            | on      |
+| lightState   | Description |
+|--------------|-------------|
+| 0            | off         |
+| 1            | on          |
 
 ## Return Codes
 
@@ -268,12 +268,24 @@ Example returned object if call is unsuccessful:
 ```js
 {
   returnCode: 14,
-  error: "Email and/or password are incorrect."
+  message: "Email and/or password are incorrect."
 }
 ```
 
-## Examples
-Located in the examples folder in the repository.
+Since the underlying MyQ API is volatile, there might be changes unforeseen by the current version of this software. An extra message detailing the request error that it encountered will be returned whenever possible.
+```js
+{
+  returnCode: 11,
+  message: "Something unexpected happened. Please wait a bit and try again."
+  unhandledError: // request error
+}
+```
+Please create a GitHub issue when this happens.
+
+## Promises
+
+This API depends on a native ES6 Promise implementation to be [supported](http://caniuse.com/promises).
+If your environment doesn't support ES6 Promises, you can [polyfill](https://github.com/jakearchibald/es6-promise).
 
 ## Contributing
 
