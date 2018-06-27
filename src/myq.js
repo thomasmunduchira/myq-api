@@ -14,17 +14,19 @@ const returnError = (returnCode, err) => {
   return result;
 };
 
-const getDeviceState = (id, attributeName) => {
-  if (!this.securityToken) {
+const getDeviceState = (securityToken, id, attributeName) => {
+  if (!securityToken) {
     return Promise.resolve(returnError(13));
   }
 
   return axios({
     method: 'get',
     url: `${constants.endpoint}/api/v4/deviceattribute/getdeviceattribute`,
+    headers: {
+      MyQApplicationId: constants.appId,
+      SecurityToken: securityToken,
+    },
     params: {
-      appId: constants.appId,
-      SecurityToken: this.securityToken,
       MyQDeviceId: id,
       AttributeName: attributeName,
     },
@@ -60,8 +62,8 @@ const getDeviceState = (id, attributeName) => {
     });
 };
 
-const setDeviceState = (id, toggle, attributeName) => {
-  if (!this.securityToken) {
+const setDeviceState = (securityToken, id, toggle, attributeName) => {
+  if (!securityToken) {
     return Promise.resolve(returnError(13));
   } else if (toggle !== 0 && toggle !== 1) {
     return Promise.resolve(returnError(15));
@@ -72,7 +74,7 @@ const setDeviceState = (id, toggle, attributeName) => {
     url: `${constants.endpoint}/api/v4/deviceattribute/putdeviceattribute`,
     headers: {
       MyQApplicationId: constants.appId,
-      securityToken: this.securityToken,
+      SecurityToken: securityToken,
     },
     data: {
       MyQDeviceId: id,
@@ -241,7 +243,7 @@ class MyQ {
   }
 
   getDoorState(id) {
-    return getDeviceState(id, 'doorstate')
+    return getDeviceState(this.securityToken, id, 'doorstate')
       .then(result => {
         if (result.returnCode !== 0) {
           return result;
@@ -257,7 +259,7 @@ class MyQ {
   }
 
   getLightState(id) {
-    return getDeviceState(id, 'lightstate')
+    return getDeviceState(this.securityToken, id, 'lightstate')
       .then(result => {
         if (result.returnCode !== 0) {
           return result;
@@ -273,13 +275,13 @@ class MyQ {
   }
 
   setDoorState(id, toggle) {
-    return setDeviceState(id, toggle, 'desireddoorstate')
+    return setDeviceState(this.securityToken, id, toggle, 'desireddoorstate')
       .then(result => result)
       .catch(err => returnError(11, err));
   }
 
   setLightState(id, toggle) {
-    return setDeviceState(id, toggle, 'desiredlightstate')
+    return setDeviceState(this.securityToken, id, toggle, 'desiredlightstate')
       .then(result => result)
       .catch(err => returnError(11, err));
   }
