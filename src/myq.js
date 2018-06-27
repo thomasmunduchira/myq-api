@@ -181,9 +181,9 @@ class MyQ {
     return axios({
       method: 'get',
       url: `${constants.endpoint}/api/v4/userdevicedetails/get`,
-      params: {
-        appId: constants.appId,
-        SecurityToken: this.securityToken,
+      headers: {
+        MyQApplicationId: constants.appId,
+        securityToken: this.securityToken,
       },
     })
       .then(response => {
