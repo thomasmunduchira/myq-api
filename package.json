@@ -1,6 +1,6 @@
 {
   "name": "myq-api",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "An updated API to interface with MyQ devices",
   "keywords": [
     "myq",
