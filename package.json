@@ -39,10 +39,13 @@
     "build": "babel src --out-dir dist --presets=env",
     "lint": "eslint ./",
     "fix": "eslint --fix ./",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "dependencies": {
-    "axios": "0.18.0"
+    "axios": "0.18.0",
+    "snyk": "^1.161.1"
   },
   "devDependencies": {
     "babel-cli": "6.26.0",
@@ -53,5 +56,6 @@
     "eslint-plugin-import": "2.13.0",
     "eslint-plugin-prettier": "2.6.1",
     "prettier": "1.13.6"
-  }
+  },
+  "snyk": true
 }
