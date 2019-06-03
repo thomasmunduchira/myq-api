@@ -1,7 +1,7 @@
 {
   "name": "myq-api",
-  "version": "0.0.2",
-  "description": "An updated API to interface with MyQ devices",
+  "version": "0.0.3",
+  "description": "Forked from thomasmunduchira/myq-api with updated dependencies",
   "keywords": [
     "myq",
     "chamberlain",
@@ -19,21 +19,14 @@
   },
   "license": "MIT",
   "author": {
-    "name": "Thomas Munduchira",
-    "email": "thomas@thomasmunduchira.com",
-    "url": "https://thomasmunduchira.com/"
+    "name": "Spencer Wallace",
+    "email": "spencer.wallace@outlook.com",
+    "url": "https://spencerwallace.ca"
   },
-  "contributors": [
-    {
-      "name": "Chad Smith",
-      "email": "chad@nospam.me",
-      "url": "http://twitter.com/chadsmith"
-    }
-  ],
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/thomasmunduchira/myq-api.git"
+    "url": "https://github.com/spenwall/myq-api"
   },
   "scripts": {
     "build": "babel src --out-dir dist --presets=env",
@@ -42,7 +35,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "axios": "0.18.0"
+    "axios": "^0.19.0"
   },
   "devDependencies": {
     "babel-cli": "6.26.0",
