@@ -1,6 +1,6 @@
 {
-  "name": "myq-api",
-  "version": "0.0.3",
+  "name": "@spenwall/myq-api",
+  "version": "0.0.5",
   "description": "Forked from thomasmunduchira/myq-api with updated dependencies",
   "keywords": [
     "myq",
