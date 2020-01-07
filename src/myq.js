@@ -167,7 +167,7 @@ class MyQ {
   getDevices(typeIdParams) {
     if (!this.securityToken) {
       return Promise.resolve(returnError(13));
-    } else if (typeIdParams === null) {
+    } else if (!typeIdParams) {
       return Promise.resolve(returnError(15));
     }
 
@@ -176,7 +176,7 @@ class MyQ {
     for (let i = 0; i < typeIds.length; i += 1) {
       const typeId = typeIds[i];
       if (!constants.allTypeIds.includes(typeId)) {
-        return returnError(15);
+        return Promise.resolve(returnError(15));
       }
     }
 
