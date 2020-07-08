@@ -2,6 +2,12 @@
 
 Interface with your [MyQ](https://www.liftmaster.com/for-homes/myq-connected-home) devices. Works and tested with both Chamberlain and LiftMaster.
 
+---
+
+#### NOTE: This package is currently not working. A new update will be released after [this pull request](https://github.com/thomasmunduchira/myq-api/pull/3) is merged in.
+
+---
+
 ## Installation
 
 ```bash
