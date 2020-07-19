@@ -27,8 +27,8 @@ Initialize credentials of the user using email and password.
 
 Example code:
 ```js
-var MyQ = require('myq-api');
-var account = new MyQ('email', 'password');
+var { myQ, constants } = require('myq-api');
+var account = new myQ('email', 'password');
 ```
 
 ### account.login()
@@ -49,21 +49,28 @@ Example returned object if call is successful:
 ```js
 {
   "returnCode": 0,
-  "token": "2sdf99a10-3190zdsv13-nn13"
+  "token": "abcd1234-a1b2-ab12-a1b2-abcdef123456"
 }
 ```
 
 ### account.getDevices(typeIds)
 
-Returns devices on the account.
+Returns devices on the account. A (very incomplete) list of possible Type names are provided as constants.
+See Possible Values for more information.
 
-| Parameter | Required | Type    | Details |
-|-----------|----------|---------|---------|
-| typeIds   | true     | Type ID | Either an array of Type IDs or a singular Type ID. See Possible Values for more info |
+| Parameter | Required | Type        | Details |
+|-----------|----------|-------------|---------|
+| typeIds   | false    | Type Name  | Either an array of Type names or a singular Type name. |
 
 Example code:
 ```js
-account.getDevices([3, 15, 17])
+// Optionally, pass in device types to filter them.
+// If none are specified, all devices will be returned.
+// [WIP]: Fix this.
+account.getDevices([
+  constants.allDeviceTypes.hub,
+  constants.allDeviceTypes.virtualGarageDoorOpener
+])
   .then(function (result) {
     console.log(result);
   }).catch(function (err) {
@@ -74,37 +81,23 @@ account.getDevices([3, 15, 17])
 Example returned object if call is successful:
 ```js
 {
-  "returnCode": 0,
-  "devices": [
+  returnCode: 0,
+  devices: [
     {
-      "id": 481404100,
-      "typeId": 3,
-      "typeName": "LampModule",
-      "serialNumber": "DAIIOW14411AW",
-      "online": true,
-      "name": "Light",
-      "lightState": 0,
-      "lightStateDescription": "off"
-      "lightStateUpdated": 1501609106061
+      family: 'garagedoor',
+      name: 'Garage Door Opener',
+      type: 'virtualgaragedooropener',
+      serialNumber: '123456ABCDEF',
+      online: true,
+      doorState: 'closed',
+      doorStateUpdated: '12/1/2019, 8:20:18 PM'
     },
     {
-      "id": 2323893289,
-      "typeId": 15,
-      "typeName": "Gateway WGDO AC",
-      "serialNumber": "DS4613424DJJS",
-      "online": true,
-      "name": "Home"
-    },
-    {
-      "id": 1631093013,
-      "typeId": 17,
-      "typeName": "Garage Door Opener WGDO",
-      "serialNumber": "DS4l424DJJS",
-      "online": true,
-      "name": "Garage",
-      "doorState": 1,
-      "doorStateDescription": "open"
-      "doorStateUpdated": 1501609106061
+      family: 'gateway',
+      name: 'Hub',
+      type: 'hub',
+      serialNumber: 'ABCDEF123456',
+      online: true
     }
   ]
 }
@@ -120,7 +113,7 @@ Retrieves the latest state of the requested door.
 
 Example code:
 ```js
-account.getDoorState(door.id)
+account.getDoorState(door.serialNumber)
   .then(function (result) {
     console.log(result);
   }).catch(function (err) {
@@ -132,8 +125,7 @@ Example returned object if call is successful:
 ```js
 {
   "returnCode": 0,
-  "doorState": 2, // See Possible Values
-  "doorStateDescription": "closed"
+  "doorState": "closed" // See Possible Values
 }
 ```
 
@@ -159,23 +151,22 @@ Example returned object if call is successful:
 ```js
 {
   "returnCode": 0,
-  "lightState": 1, // See Possible Values
-  "lightStateDescription": "on"
+  "lightState": "on" // See Possible Values
 }
 ```
 
-### account.setDoorState(id, toggle)
+### account.setDoorOpen(serialNumber, shouldOpen)
 
 Set the requested door to open or close. Returns a confirmation once complete. Note that the door might not be opened or closed fully by the time this function returns.
 
-| Parameter | Required | Type        | Details                           |
-|-----------|----------|-------------|-----------------------------------|
-| id        | true     | Integer     | Door ID                           |
-| toggle    | true     | Door Toggle | See Possible Values for more info |
+| Parameter    | Required | Type        | Details                           |
+|--------------|----------|-------------|-----------------------------------|
+| serialNumber | true     | String      | Serial number of the device       |
+| toggle       | true     | Boolean     | true or false                     |
 
 Example code:
 ```js
-account.setDoorState(door.id, 1)
+account.setDoorState(door.serialNumber, true)
   .then(function (result) {
     console.log(result);
   }).catch(function (err) {
@@ -194,14 +185,14 @@ Example returned object if call is successful:
 
 Set the requested light to on or off. Returns a confirmation once complete.
 
-| Parameter | Required | Type         | Details                           |
-|-----------|----------|--------------|-----------------------------------|
-| id        | true     | Integer      | Light ID                          |
-| toggle    | true     | Light Toggle | See Possible Values for more info |
+| Parameter     | Required | Type         | Details                               |
+|---------------|----------|--------------|---------------------------------------|
+| serialNumber  | true     | String       | Light Serial Number                   |
+| turnOn        | true     | Boolean      | Whether the light should be on or off |
 
 Example code:
 ```js
-account.setLightState(light.id, 1)
+account.setLightState(light.serialNumber, 1)
   .then(function (result) {
     console.log(result);
   }).catch(function (err) {
@@ -218,6 +209,19 @@ Example returned object if call is successful:
 
 ## Possible Values
 
+This is a (partial) list of the types of devices that MyQ supports.
+MyQ no longer returns on Type IDs, but rather, returns (mostly) human-readable strings.
+Constants for these are provided for your convenience.
+
+Pull requests are welcome to add other device types :)
+
+| Constant                | Type Name                  |
+|-------------------------|----------------------------|
+| hub                     | hub                        |
+| virtualGarageDoorOpener | virtualgaragedooropener    |
+| wifiGarageDoorOpener    | wifigaragedooropener       |
+| wifiGdoGateway          | wifigdogateway             |
+
 | Type ID | Description                    |
 |---------|--------------------------------|
 | 1       | Gateway                        |
@@ -233,8 +237,8 @@ Example returned object if call is successful:
 
 | Door Toggle | Description |
 |-------------|-------------|
-| 0           | close door  |
-| 1           | open door   |
+| false       | close door  |
+| true        | open door   |
 
 | doorState | Description           |
 |-----------|-----------------------|
@@ -300,13 +304,11 @@ If you would like to contribute enhancements or fixes, please do the following:
 2. Make your changes.
 3. Create a pull request.
 
-## Author
+## Authors
 
-[Thomas Munduchira](https://thomasmunduchira.com/) ([thomas@thomasmunduchira.com](mailto:thomas@thomasmunduchira.com))
-
-## Original Author
-
-[Chad Smith](http://twitter.com/chadsmith) ([chad@nospam.me](mailto:chad@nospam.me))
+- [Thomas Munduchira](https://thomasmunduchira.com/) ([thomas@thomasmunduchira.com](mailto:thomas@thomasmunduchira.com))
+- [Chad Smith](http://twitter.com/chadsmith) ([chad@nospam.me](mailto:chad@nospam.me))
+- [Nathan Snyder](https://snydern.com/) ([nathan@snydern.com](mailto:nathan@snydern.com))
 
 ## License
 

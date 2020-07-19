@@ -1,7 +1,15 @@
+const authVersion = 'v5';
+const deviceVersion = 'v5.1';
+
 const constants = {
-  endpoint: 'https://myqexternal.myqdevice.com',
-  appId: 'NWknvuBd7LoFHfXmKNMBcgajXtZEgKUh4V7WNzMidrpUUluDpVYVZx+xT4PCM5Kx',
-  allTypeIds: [1, 2, 3, 5, 7, 9, 13, 15, 16, 17],
+  authBase: `https://api.myqdevice.com/api/${authVersion}`,
+  deviceBase: `https://api.myqdevice.com/api/${deviceVersion}`,
+  allDeviceTypes: {
+    hub: 'hub',
+    virtualGarageDoorOpener: 'virtualgaragedooropener',
+    wifiGarageDoorOpener: 'wifigaragedooropener',
+    wifiGdoGateway: 'wifigdogateway',
+  },
   errorMessages: {
     11: 'Something unexpected happened. Please wait a bit and try again.',
     12: 'MyQ service is currently down. Please wait a bit and try again.',
@@ -10,6 +18,13 @@ const constants = {
     15: 'Invalid parameter(s) provided.',
     16: 'User will be locked out due to too many tries. 1 try left.',
     17: 'User is locked out due to too many tries. Please reset password and try again.',
+    18: 'The requested device could not be found.',
+    19: 'Unable to determine the state of the requested device.',
+    20: 'Could not find that URL. Please file a bug report.',
+  },
+  doorCommands: {
+    close: 'close',
+    open: 'open',
   },
   doorStates: {
     1: 'open',
@@ -19,9 +34,32 @@ const constants = {
     5: 'going down',
     9: 'not closed',
   },
+  headers: {
+    defaultUserAgent: 'okhttp/3.10.0',
+    deviceApiVersion: deviceVersion,
+    defaultBrandId: 2,
+    defaultCulture: 'en',
+    appId: 'JVM/G9Nwih5BwKgNCjLxiFUQxQijAebyyg8QUHr7JOrP+tuPb8iHfRHKwTmDzHOu',
+  },
+  lightCommands: {
+    on: 'on',
+    off: 'off',
+  },
   lightStates: {
-    0: 'off',
-    1: 'on',
+    0: 'turnoff',
+    1: 'turnon',
+  },
+  myQProperties: {
+    doorState: 'door_state',
+    lastUpdate: 'last_update',
+    lightState: 'light_state',
+    online: 'online',
+  },
+  routes: {
+    account: '/My',
+    getDevices: '/Accounts/{accountId}/Devices',
+    login: '/Login',
+    setDevice: '/Accounts/{accountId}/Devices/{serialNumber}/actions',
   },
 };
 
