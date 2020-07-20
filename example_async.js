@@ -3,21 +3,18 @@ const MyQ = require('myq-api');
 const EMAIL = '<EMAIL>';
 const PASSWORD = '<PASSWORD>';
 
-const account = new MyQ();
-let door;
+async function main() {
+  const account = new MyQ();
 
-console.log('Logging in.');
-account
-  .login(EMAIL, PASSWORD)
-  .then((loginResult) => {
+  try {
+    console.log('Logging in.');
+    const loginResult = await account.login(EMAIL, PASSWORD);
     console.log('Login result:');
     console.log(JSON.stringify(loginResult, null, 2));
     console.log(`Short-lived security token: '${loginResult.securityToken}'`);
 
     console.log(`\nGetting all devices on account`);
-    return account.getDevices();
-  })
-  .then((getDevicesResult) => {
+    const getDevicesResult = await account.getDevices();
     console.log('getDevices result:');
     console.log(JSON.stringify(getDevicesResult, null, 2));
 
@@ -32,7 +29,7 @@ account
       );
     });
 
-    door = devices.find(
+    const door = devices.find(
       (device) => device.state && MyQ.constants._stateAttributes.doorState in device.state
     );
     if (!door) {
@@ -40,27 +37,27 @@ account
     }
 
     console.log(`\nClosing door '${door.name}'`);
-    return account.setDoorState(door.serial_number, MyQ.actions.door.CLOSE);
-  })
-  .then((setDoorStateResult) => {
+    const setDoorStateResult = await account.setDoorState(
+      door.serial_number,
+      MyQ.actions.door.CLOSE
+    );
     console.log('setDoorStateResult:');
     console.log(JSON.stringify(setDoorStateResult, null, 2));
 
     console.log('Waiting 5 seconds before polling state again');
-    return new Promise((resolve) => setTimeout(resolve, 5000));
-  })
-  .then(() => {
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+
     console.log(`\nGetting state of door '${door.name}'`);
-    return account.getDoorState(door.serial_number);
-  })
-  .then((getDoorStateResult) => {
+    const getDoorStateResult = await account.getDoorState(door.serial_number);
     console.log('getDoorState result:');
     console.log(JSON.stringify(getDoorStateResult, null, 2));
     console.log(`State of door '${door.name}': ${getDoorStateResult.deviceState}`);
-  })
-  .catch((error) => {
+  } catch (error) {
     console.error('Error received:');
     console.error(error);
     console.error(`Error code: ${error.code}`);
     console.error(`Error message: ${error.message}`);
-  });
+  }
+}
+
+main();

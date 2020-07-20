@@ -1,15 +1,17 @@
 {
   "name": "myq-api",
-  "version": "0.0.2",
-  "description": "An updated API to interface with MyQ devices",
+  "version": "2.0.0",
+  "description": "An updated API to interface with myQ devices",
   "keywords": [
     "myq",
     "chamberlain",
     "liftmaster",
-    "garage door",
+    "garage",
     "door",
-    "lights",
+    "light",
+    "device",
     "automation",
+    "smart",
     "home",
     "api"
   ],
@@ -23,35 +25,39 @@
     "email": "thomas@thomasmunduchira.com",
     "url": "https://thomasmunduchira.com/"
   },
-  "contributors": [
-    {
-      "name": "Chad Smith",
-      "email": "chad@nospam.me",
-      "url": "http://twitter.com/chadsmith"
-    }
-  ],
   "main": "index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/thomasmunduchira/myq-api.git"
   },
   "scripts": {
-    "build": "babel src --out-dir dist --presets=env",
-    "lint": "eslint ./",
-    "fix": "eslint --fix ./",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint --ignore-path .gitignore ./",
+    "fix": "eslint --fix  --ignore-path .gitignore ./",
+    "test": "jest test/unit",
+    "test:mutants": "stryker run"
   },
   "dependencies": {
-    "axios": "^0.19.1"
+    "axios": "^0.20.0",
+    "axios-debug-log": "^0.8.0",
+    "debug": "^4.1.1"
   },
   "devDependencies": {
-    "babel-cli": "6.26.0",
-    "babel-preset-env": "1.7.0",
-    "eslint": "5.0.1",
-    "eslint-config-airbnb-base": "13.0.0",
-    "eslint-config-prettier": "2.9.0",
-    "eslint-plugin-import": "2.13.0",
-    "eslint-plugin-prettier": "2.6.1",
-    "prettier": "1.13.6"
+    "@stryker-mutator/core": "^3.3.1",
+    "@stryker-mutator/javascript-mutator": "^3.3.1",
+    "@stryker-mutator/jest-runner": "^3.3.1",
+    "axios-mock-adapter": "^1.18.2",
+    "eslint": "^7.7.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-jest": "^23.20.0",
+    "eslint-plugin-jsdoc": "^30.2.4",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "jest": "^26.4.1",
+    "prettier": "^2.0.5"
+  },
+  "engines": {
+    "node": ">=8.3.0"
   }
 }
