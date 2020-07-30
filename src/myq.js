@@ -88,7 +88,7 @@ class MyQ {
         }
 
         const token = data.SecurityToken;
-        this.token = token;
+        this.securityToken = token;
 
         return {
           returnCode: 0,
