@@ -160,7 +160,7 @@ class MyQ {
       .catch(({ response }) => ErrorHandler.parseBadResponse(response));
   }
 
-  getDevices() {
+  getDevices(types) {
     let promise = Promise.resolve();
     if (!this.accountId) {
       promise = this.getAccountInfo();
@@ -192,7 +192,15 @@ class MyQ {
         };
 
         const modifiedDevices = [];
-        Object.values(devices).forEach(device => {
+        let devicesToIterate = Object.values(devices);
+        if (types) {
+          if (Array.isArray(types)) {
+            devicesToIterate = devicesToIterate.filter(device => types.some(type => type === device.device_type));
+          } else if (typeof types === 'string') {
+            devicesToIterate = devicesToIterate.filter(device => types === device.device_type);
+          }
+        }
+        devicesToIterate.forEach(device => {
           const modifiedDevice = {
             family: device.device_family,
             name: device.name,
