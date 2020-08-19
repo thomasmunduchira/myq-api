@@ -160,10 +160,20 @@ class MyQ {
       .catch(({ response }) => ErrorHandler.parseBadResponse(response));
   }
 
-  getDevices() {
+  getDevices(typeIdParams) {
     let promise = Promise.resolve();
     if (!this.accountId) {
       promise = this.getAccountInfo();
+    }
+
+    let typeIds = Array.isArray(typeIdParams) ? typeIdParams : [typeIdParams];
+    typeIds = typeIds.filter(typeId => typeof typeId !== 'undefined');
+
+    for (let i = 0; i < typeIds.length; i += 1) {
+      const typeId = typeIds[i];
+      if (!Object.values(constants.allDeviceTypes).includes(typeId)) {
+        return ErrorHandler.returnError(15);
+      }
     }
 
     return promise
@@ -215,7 +225,9 @@ class MyQ {
             modifiedDevice.lightStateUpdated = date.toLocaleString();
           }
 
-          modifiedDevices.push(modifiedDevice);
+          if (typeIds.length === 0 || typeIds.includes(modifiedDevice.type)) {
+            modifiedDevices.push(modifiedDevice);
+          }
         });
 
         result.devices = modifiedDevices;
