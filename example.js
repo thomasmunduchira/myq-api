@@ -1,6 +1,6 @@
-var MyQ = require('myq-api');
+const { myQ, constants } = require('myq-api');
 
-var account = new MyQ('email', 'password');
+var account = new myQ('email', 'password');
 
 var delay = function delay(time) {
   return new Promise(function (resolve) {
@@ -16,7 +16,7 @@ account.login()
     if (result.returnCode !== 0) {
       throw new Error('Login unsuccessful.');
     }
-    const deviceType = 'virtualgaragedooropener';
+    const deviceType = constants.allDeviceTypes.wifiGarageDoorOpener;
     console.log(`\nGetting all ${deviceType} devices on account (check README for all possible types)`);
     return account.getDevices(deviceType);
   })
