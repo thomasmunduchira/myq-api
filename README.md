@@ -1,5 +1,12 @@
 # myq-api
 
+![node-current](https://img.shields.io/node/v/myq-api)
+![npm](https://img.shields.io/npm/dt/myq-api)
+![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/thomasmunduchira/myq-api/latest_push/master)
+![Coveralls github](https://img.shields.io/coveralls/github/thomasmunduchira/myq-api)
+![Stryker mutation score](https://badge.stryker-mutator.io/github.com/thomasmunduchira/myq-api/master)
+![GitHub](https://img.shields.io/github/license/thomasmunduchira/myq-api)
+
 Interface with your [myQ](https://www.myq.com/products) devices using this npm module. Works with both Chamberlain and LiftMaster.
 
 Supports:
