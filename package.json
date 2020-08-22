@@ -34,6 +34,8 @@
     "lint": "eslint --ignore-path .gitignore ./",
     "fix": "eslint --fix  --ignore-path .gitignore ./",
     "test": "jest test/unit",
+    "test:e2e": "jest test/e2e",
+    "test:coverage": "jest --coverage test/unit",
     "test:mutants": "stryker run"
   },
   "dependencies": {
@@ -46,6 +48,7 @@
     "@stryker-mutator/javascript-mutator": "^3.3.1",
     "@stryker-mutator/jest-runner": "^3.3.1",
     "axios-mock-adapter": "^1.18.2",
+    "coveralls": "^3.1.0",
     "eslint": "^7.7.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-config-prettier": "^6.11.0",
@@ -58,6 +61,6 @@
     "prettier": "^2.0.5"
   },
   "engines": {
-    "node": ">=8.3.0"
+    "node": ">=10"
   }
 }
