@@ -1,3 +1,4 @@
 node_modules
 .stryker-tmp
+coverage
 reports

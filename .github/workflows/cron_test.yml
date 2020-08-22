@@ -1,0 +1,22 @@
+name: Cron Test
+
+on:
+  schedule:
+    # 8:00 daily
+    - cron: '0 8 * * *'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [ '10.x', '12.x', '14.x' ]
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node }}
+    - name: Install modules
+      run: npm install
+    - name: Run tests
+      run: npm test

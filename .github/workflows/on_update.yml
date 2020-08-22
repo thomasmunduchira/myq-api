@@ -1,0 +1,45 @@
+name: On Update
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [ '10.x', '12.x', '14.x' ]
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node }}
+    - name: Install modules
+      run: npm install
+    - name: Run tests
+      run: npm test
+  
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
+    - name: Install modules
+      run: npm install
+    - name: Run tests with coverage
+      run: npm run test:coverage
+    - name: Upload to Coveralls
+      uses: coverallsapp/github-action@v1.1.1
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Run mutation testing and upload to Stryker
+      run: npm run test:mutants
+      env:
+        STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}

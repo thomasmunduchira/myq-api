@@ -4,6 +4,10 @@
     "src/MyQ.js",
     "src/ErrorHandler.js"
   ],
+  "files": [
+    "src/**/*.js",
+    "test/unit/**/*.js"
+  ],
   "mutator": "javascript",
   "packageManager": "npm",
   "reporters": [

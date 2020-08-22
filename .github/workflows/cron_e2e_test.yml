@@ -1,0 +1,22 @@
+name: Cron E2E Test
+
+on:
+  schedule:
+    # 8:12, 19:12 daily - inconspicuous times to hopefully prevent service from blocklisting the account
+    - cron: '12 8/11 * * *'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
+    - name: Install modules
+      run: npm install
+    - name: Run E2E tests
+      run: npm run test:e2e
+      env:
+        MYQ_EMAIL: ${{ secret.MYQ_EMAIL }}
+        MYQ_PASSWORD: ${{ secret.MYQ_PASSWORD }}
