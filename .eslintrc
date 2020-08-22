@@ -1,14 +1,17 @@
 {
   "extends": [
     "airbnb-base",
+    "plugin:jest/recommended",
+    "plugin:jest/style",
+    "plugin:jsdoc/recommended",
+    "plugin:node/recommended",
     "prettier"
   ],
   "plugins": [
     "prettier"
   ],
   "rules": {
-    "class-methods-use-this": 0,
-    "no-else-return": 0,
+    "no-underscore-dangle": 0,
     "prettier/prettier": [
       "error",
       {
@@ -17,5 +20,27 @@
         "trailingComma": "es5"
       }
     ]
-  }
+  },
+  "overrides": [{
+    "files": ["example.js", "example_async.js"],
+    "rules": {
+      "import/no-unresolved": 0,
+      "jsdoc/require-jsdoc": 0,
+      "no-console": 0,
+      "node/no-missing-require": 0
+    }
+  },
+  {
+    "files": "**/*.test.js",
+    "rules": {
+      "node/no-unpublished-require": 0
+    }
+  },
+  {
+    "files": "test/unit/MyQ/constructor.test.js",
+    "rules": {
+      "jest/no-try-expect": 0,
+      "no-new": 0
+    }
+  }]
 }
