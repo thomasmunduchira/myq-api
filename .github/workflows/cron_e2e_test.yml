@@ -1,4 +1,4 @@
-name: Cron E2E Test
+name: cron_e2e_test
 
 on:
   schedule:

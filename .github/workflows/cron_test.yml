@@ -1,4 +1,4 @@
-name: Cron Test
+name: cron_test
 
 on:
   schedule:

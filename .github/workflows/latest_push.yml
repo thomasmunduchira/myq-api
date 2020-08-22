@@ -1,4 +1,4 @@
-name: On Update
+name: latest_push
 
 on:
   push:
