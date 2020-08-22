@@ -53,24 +53,15 @@ Example returned object if call is successful:
 }
 ```
 
-### account.getDevices(typeIds)
+### account.getDevices()
 
-Returns devices on the account. A (very incomplete) list of possible Type names are provided as constants.
-See Possible Values for more information.
-
-| Parameter | Required | Type        | Details |
-|-----------|----------|-------------|---------|
-| typeIds   | false    | Type Name  | Either an array of Type names or a singular Type name. |
+Returns devices on the account.
 
 Example code:
 ```js
 // Optionally, pass in device types to filter them.
 // If none are specified, all devices will be returned.
-// [WIP]: Fix this.
-account.getDevices([
-  constants.allDeviceTypes.hub,
-  constants.allDeviceTypes.virtualGarageDoorOpener
-])
+account.getDevices()
   .then(function (result) {
     console.log(result);
   }).catch(function (err) {
