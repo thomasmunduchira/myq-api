@@ -2,8 +2,8 @@ name: cron_e2e_test
 
 on:
   schedule:
-    # 8:12, 19:12 daily - inconspicuous times to hopefully prevent service from blocklisting the account
-    - cron: '12 8/11 * * *'
+    # 2:12, 15:12 UTC daily - inconspicuous times to hopefully prevent service from blocklisting the account
+    - cron: '12 2/13 * * *'
 
 jobs:
   test:
@@ -18,5 +18,5 @@ jobs:
     - name: Run E2E tests
       run: npm run test:e2e
       env:
-        MYQ_EMAIL: ${{ secret.MYQ_EMAIL }}
-        MYQ_PASSWORD: ${{ secret.MYQ_PASSWORD }}
+        MYQ_EMAIL: ${{ secrets.MYQ_EMAIL }}
+        MYQ_PASSWORD: ${{ secrets.MYQ_PASSWORD }}

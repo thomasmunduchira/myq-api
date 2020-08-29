@@ -2,8 +2,8 @@ name: cron_test
 
 on:
   schedule:
-    # 8:00 daily
-    - cron: '0 8 * * *'
+    # 2:00 UTC daily
+    - cron: '0 2 * * *'
 
 jobs:
   test:
