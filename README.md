@@ -3,7 +3,7 @@
 ![node-current](https://img.shields.io/node/v/myq-api)
 ![npm](https://img.shields.io/npm/dt/myq-api)
 ![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/thomasmunduchira/myq-api/latest_push/master)
-![Coveralls github](https://img.shields.io/coveralls/github/thomasmunduchira/myq-api)
+![Coveralls GitHub](https://img.shields.io/coveralls/github/thomasmunduchira/myq-api)
 ![Stryker mutation score](https://badge.stryker-mutator.io/github.com/thomasmunduchira/myq-api/master)
 ![GitHub](https://img.shields.io/github/license/thomasmunduchira/myq-api)
 
@@ -20,12 +20,6 @@ Supports:
 
 ## Installation
 
-Latest version:
-```bash
-npm install https://github.com/thomasmunduchira/myq-api.git
-```
-
-Older version that is currently live on npm:
 ```bash
 npm install myq-api
 ```
@@ -111,7 +105,7 @@ Returned object if call is successful:
 }
 ```
 
-For robust error handling, catch and handle the following errors:
+For [robust error handling](#error-handling), catch and handle the following errors:
 * `INVALID_ARGUMENT` (if arguments are not sufficiently validated beforehand)
 * `SERVICE_REQUEST_FAILED`
 * `SERVICE_UNREACHABLE`
@@ -166,7 +160,7 @@ Returned object if call is successful:
 }
 ```
 
-For robust error handling, catch and handle the following errors:
+For [robust error handling](#error-handling), catch and handle the following errors:
 * `LOGIN_REQUIRED`
 * `SERVICE_REQUEST_FAILED`
 * `SERVICE_UNREACHABLE`
@@ -221,7 +215,7 @@ Returned object if call is successful:
 }
 ```
 
-For robust error handling, catch and handle the following errors:
+For [robust error handling](#error-handling), catch and handle the following errors:
 * `INVALID_ARGUMENT` (if argument is not sufficiently validated beforehand)
 * `LOGIN_REQUIRED`
 * `SERVICE_REQUEST_FAILED`
@@ -280,7 +274,7 @@ Returned object if call is successful:
 }
 ```
 
-For robust error handling, catch and handle the following errors:
+For [robust error handling](#error-handling), catch and handle the following errors:
 * `INVALID_ARGUMENT` (if argument is not sufficiently validated beforehand)
 * `LOGIN_REQUIRED`
 * `SERVICE_REQUEST_FAILED`
@@ -338,7 +332,7 @@ Returned object if call is successful:
 }
 ```
 
-For robust error handling, catch and handle the following errors:
+For [robust error handling](#error-handling), catch and handle the following errors:
 * `INVALID_ARGUMENT` (if argument is not sufficiently validated beforehand)
 * `LOGIN_REQUIRED`
 * `SERVICE_REQUEST_FAILED`
@@ -396,7 +390,7 @@ Returned object if call is successful:
 }
 ```
 
-For robust error handling, catch and handle the following errors:
+For [robust error handling](#error-handling), catch and handle the following errors:
 * `INVALID_ARGUMENT` (if arguments are not sufficiently validated beforehand)
 * `LOGIN_REQUIRED`
 * `SERVICE_REQUEST_FAILED`
@@ -454,7 +448,7 @@ Returned object if call is successful:
 }
 ```
 
-For robust error handling, catch and handle the following errors:
+For [robust error handling](#error-handling), catch and handle the following errors:
 * `INVALID_ARGUMENT` (if arguments are not sufficiently validated beforehand)
 * `LOGIN_REQUIRED`
 * `SERVICE_REQUEST_FAILED`
@@ -507,7 +501,7 @@ Returned object if call is successful:
 }
 ```
 
-For robust error handling, catch and handle the following errors:
+For [robust error handling](#error-handling), catch and handle the following errors:
 * `LOGIN_REQUIRED`
 * `SERVICE_REQUEST_FAILED`
 * `SERVICE_UNREACHABLE`
@@ -562,7 +556,7 @@ Returned object if call is successful:
 }
 ```
 
-For robust error handling, catch and handle the following errors:
+For [robust error handling](#error-handling), catch and handle the following errors:
 * `INVALID_ARGUMENT` (if arguments are not sufficiently validated beforehand)
 * `LOGIN_REQUIRED`
 * `SERVICE_REQUEST_FAILED`
@@ -622,7 +616,7 @@ Returned object if call is successful:
 }
 ```
 
-For robust error handling, catch and handle the following errors:
+For [robust error handling](#error-handling), catch and handle the following errors:
 * `INVALID_ARGUMENT` (if arguments are not sufficiently validated beforehand)
 * `LOGIN_REQUIRED`
 * `SERVICE_REQUEST_FAILED`
@@ -697,7 +691,7 @@ async function executeServiceRequest() {
 
 Returned object if call is successful: [axios response](https://github.com/axios/axios#response-schema).
 
-For robust error handling, catch and handle the following errors:
+For [robust error handling](#error-handling), catch and handle the following errors:
 * `INVALID_ARGUMENT` (if argument is not sufficiently validated beforehand)
 * `LOGIN_REQUIRED`
 * `SERVICE_REQUEST_FAILED`
