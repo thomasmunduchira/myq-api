@@ -127,6 +127,7 @@ test('succeeds when logged in and no headers specified via config parameter', as
       undefined,
       expect.objectContaining({
         ...MyQ.constants._headers,
+        'User-Agent': expect.any(String),
         SecurityToken: 'securityToken',
       })
     )
@@ -147,7 +148,14 @@ test('succeeds when logged in and no headers specified via config parameter', as
 
 test('succeeds when not logged in and null security token specified via config parameter', async () => {
   axiosMock
-    .onPost(MyQ.constants._routes.login, undefined, expect.objectContaining(MyQ.constants._headers))
+    .onPost(
+      MyQ.constants._routes.login,
+      undefined,
+      expect.objectContaining({
+        ...MyQ.constants._headers,
+        'User-Agent': expect.any(String),
+      })
+    )
     .replyOnce(200, { SecurityToken: 'securityToken' });
 
   const account = new MyQ();
@@ -172,6 +180,7 @@ test('succeeds when not logged in and security token specified via config parame
       undefined,
       expect.objectContaining({
         ...MyQ.constants._headers,
+        'User-Agent': expect.any(String),
         SecurityToken: 'securityToken',
       })
     )
@@ -184,6 +193,37 @@ test('succeeds when not logged in and security token specified via config parame
     method: 'get',
     headers: {
       SecurityToken: 'securityToken',
+    },
+  });
+
+  await expect(promise).resolves.toMatchObject({
+    data: { items: ['device1', 'device2'] },
+  });
+});
+
+test('succeeds when user agent specified via config parameter', async () => {
+  axiosMock
+    .onAny(MyQ.constants._routes.login)
+    .replyOnce(200, { SecurityToken: 'securityToken' })
+    .onGet(
+      MyQ.constants._routes.getDevices.replace(/{|}/g, ''),
+      undefined,
+      expect.objectContaining({
+        ...MyQ.constants._headers,
+        'User-Agent': 'userAgent',
+        SecurityToken: 'securityToken',
+      })
+    )
+    .replyOnce(200, { items: ['device1', 'device2'] });
+
+  const account = new MyQ();
+  await account.login('email', 'password');
+  const promise = account._executeServiceRequest({
+    baseURL: MyQ.constants._baseUrls.device,
+    url: MyQ.constants._routes.getDevices.replace(/{|}/g, ''),
+    method: 'get',
+    headers: {
+      'User-Agent': 'userAgent',
     },
   });
 

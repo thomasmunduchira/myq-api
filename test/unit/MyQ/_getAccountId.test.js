@@ -79,6 +79,7 @@ test('succeeds', async () => {
       { params: { expand: 'account' } },
       expect.objectContaining({
         ...MyQ.constants._headers,
+        'User-Agent': expect.any(String),
         SecurityToken: 'securityToken',
       })
     )

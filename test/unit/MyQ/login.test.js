@@ -81,7 +81,10 @@ test('succeeds', async () => {
         Username: 'email',
         Password: 'password',
       },
-      expect.objectContaining(MyQ.constants._headers)
+      expect.objectContaining({
+        ...MyQ.constants._headers,
+        'User-Agent': expect.any(String),
+      })
     )
     .replyOnce(200, { SecurityToken: 'securityToken' });
 

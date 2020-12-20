@@ -42,7 +42,6 @@ const constants = {
   },
   _headers: {
     'Content-Type': 'application/json',
-    'User-Agent': 'okhttp/3.10.0',
     MyQApplicationId: 'JVM/G9Nwih5BwKgNCjLxiFUQxQijAebyyg8QUHr7JOrP+tuPb8iHfRHKwTmDzHOu',
     ApiVersion: '5.1',
     BrandId: '2',
