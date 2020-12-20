@@ -145,6 +145,7 @@ test('succeeds', async () => {
       },
       expect.objectContaining({
         ...MyQ.constants._headers,
+        'User-Agent': expect.any(String),
         SecurityToken: 'securityToken',
       })
     )

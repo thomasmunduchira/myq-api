@@ -1,5 +1,6 @@
 const axios = require('axios');
 const axiosDebugLog = require('axios-debug-log');
+const crypto = require('crypto');
 const debug = require('debug')('myq-api'); // the latter parameter specified here is the custom logger name
 
 const actions = require('./actions');
@@ -719,6 +720,11 @@ class MyQ {
         delete config.headers[key];
       }
     });
+
+    if (config.headers['User-Agent'] === undefined) {
+      // Set a random user agent since the myQ service blocklists user agents.
+      config.headers['User-Agent'] = crypto.randomBytes(10).toString('hex');
+    }
 
     try {
       return await axios(config);
