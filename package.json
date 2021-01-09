@@ -38,7 +38,7 @@
     "test:mutants": "stryker run"
   },
   "dependencies": {
-    "axios": "^0.20.0",
+    "axios": "^0.21.1",
     "axios-debug-log": "^0.8.0",
     "crypto": "^1.0.1",
     "debug": "^4.1.1"
