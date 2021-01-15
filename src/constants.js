@@ -1,5 +1,5 @@
-const authVersion = 'v5.1';
-const deviceVersion = 'v5.2';
+const authVersion = 'v5';
+const deviceVersion = 'v5.1';
 
 const constants = {
   codes: {
