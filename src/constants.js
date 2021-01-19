@@ -43,7 +43,7 @@ const constants = {
   _headers: {
     'Content-Type': 'application/json',
     MyQApplicationId: 'JVM/G9Nwih5BwKgNCjLxiFUQxQijAebyyg8QUHr7JOrP+tuPb8iHfRHKwTmDzHOu',
-    ApiVersion: '5.1',
+    ApiVersion: '5.2',
     BrandId: '2',
     Culture: 'en',
   },
