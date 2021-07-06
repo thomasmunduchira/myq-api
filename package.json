@@ -29,6 +29,7 @@
     "type": "git",
     "url": "git+https://github.com/thomasmunduchira/myq-api.git"
   },
+  "types": "types/index.d.ts",
   "scripts": {
     "lint": "eslint --ignore-path .gitignore ./",
     "fix": "eslint --fix  --ignore-path .gitignore ./",
