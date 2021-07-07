@@ -87,5 +87,5 @@ export interface DeviceSetStateResponse {
 
 export interface LightStateResponse {
   code: string;
-  lightState: LightState;
+  deviceState: DeviceState;
 }
